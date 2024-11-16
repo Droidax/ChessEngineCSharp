@@ -20,6 +20,7 @@ public class GameManager : Singleton<GameManager>
         {
             case GameState.Starting:
                 //StartGame();
+                Debug.Log(newState);
                 break;
 
             case GameState.WhiteTurn:
@@ -40,8 +41,10 @@ public class GameManager : Singleton<GameManager>
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
             
         }
-
+        
         OnAfterStateChanged?.Invoke(newState);
+
+        Debug.Log($"New state: {newState}");
     }
 
 
