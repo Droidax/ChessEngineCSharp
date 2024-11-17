@@ -21,11 +21,7 @@ namespace Assets.Scripts.UI
 
         void Start()
         {
-            Board.Instance.SetNewBoard();
-            MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
-            moveGenerator.GenerateLegalMoves();
             GenerateBoard();
-
         }
         void GenerateBoard()
         {

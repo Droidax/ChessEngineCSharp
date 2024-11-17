@@ -1,6 +1,8 @@
+using Assets.Scripts.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.UI;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
@@ -19,8 +21,7 @@ public class GameManager : Singleton<GameManager>
         switch (newState)
         {
             case GameState.Starting:
-                //StartGame();
-                Debug.Log(newState);
+                StartGame();
                 break;
 
             case GameState.WhiteTurn:
@@ -45,6 +46,14 @@ public class GameManager : Singleton<GameManager>
         OnAfterStateChanged?.Invoke(newState);
 
         Debug.Log($"New state: {newState}");
+    }
+
+
+    private void StartGame()
+    {
+        Board.Instance.SetNewBoard();
+        MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
+        moveGenerator.GenerateLegalMoves();
     }
 
 

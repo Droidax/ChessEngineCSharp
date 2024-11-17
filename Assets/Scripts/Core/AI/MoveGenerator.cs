@@ -217,13 +217,13 @@ public class MoveGenerator
     {
         if (color == Pieces.White)
         {
-            if (board.WhiteCastleKingside && board.CanCastle(false, board))
+            if (board.WhiteCastleKingSide && board.CanCastle(false, board))
             {
                 if (board.Square[5] == Pieces.Empty && board.Square[6] == Pieces.Empty)
                     pseudoMoves.Add(new Move(4, 6));
             }
 
-            if (board.WhiteCastleQueenside && board.CanCastle(true, board))
+            if (board.WhiteCastleQueenSide && board.CanCastle(true, board))
             {
                 if (board.Square[3] == Pieces.Empty && board.Square[2] == Pieces.Empty && board.Square[1] == Pieces.Empty)
                     pseudoMoves.Add(new Move(4, 2));
@@ -231,13 +231,13 @@ public class MoveGenerator
         }
         else
         {
-            if (board.BlackCastleKingside && board.CanCastle(false, board))
+            if (board.BlackCastleKingSide && board.CanCastle(false, board))
             {
                 if (board.Square[61] == Pieces.Empty && board.Square[62] == Pieces.Empty)
                     pseudoMoves.Add(new Move(60, 62));
             }
 
-            if (board.BlackCastleQueenside && board.CanCastle(true, board))
+            if (board.BlackCastleQueenSide && board.CanCastle(true, board))
             {
                 if (board.Square[59] == Pieces.Empty && board.Square[58] == Pieces.Empty && board.Square[57] == Pieces.Empty)
                     pseudoMoves.Add(new Move(60, 58));

@@ -10,7 +10,7 @@ using static Assets.Scripts.Core.Board;
 
 namespace Assets.Scripts.UI.Cursor
 {
-    public class CursorController : MonoBehaviour
+    public class CursorController : Singleton<CursorController>
     {
         private Camera _mainCamera;
         private CursorControls _controls;
@@ -23,13 +23,14 @@ namespace Assets.Scripts.UI.Cursor
         public GameObject tile;
         public GameObject piece;
 
-        void Awake()
+        protected override void Awake()
         {
             ChangeCursor(cursor);
             UnityEngine.Cursor.lockState = CursorLockMode.Confined;
             _mainCamera = Camera.main;
             _controls = new CursorControls();
             _isSelected = false;
+            base.Awake();
         }
 
         private void OnEnable()
@@ -69,12 +70,12 @@ namespace Assets.Scripts.UI.Cursor
 
             _index = int.Parse(hit2DAll.Last().collider.name);
 
-            if (Instance.Square[_index] == Pieces.Empty && _isSelected == false)
+            if (Board.Instance.Square[_index] == Pieces.Empty && _isSelected == false)
                 return;
 
-            if (Instance.Square[_index] != Pieces.Empty && _isSelected == false && Instance.ColorToMove == Pieces.White)//select piece
+            if (Board.Instance.Square[_index] != Pieces.Empty && _isSelected == false && Board.Instance.ColorToMove == Pieces.White)//select piece
             {
-                if ( Pieces.IsColor(Instance.Square[_index], Instance.ColorToMove)) 
+                if ( Pieces.IsColor(Board.Instance.Square[_index], Board.Instance.ColorToMove)) 
                 {
                     tile = GameObject.Find(Convert.ToString(_index));
                     tile.GetComponent<Tile>().ChangeColorSelect();
@@ -84,8 +85,7 @@ namespace Assets.Scripts.UI.Cursor
                     return;
                 }
             }
-
-            if (Instance.Square[_index] != Pieces.Empty == _isSelected && _index == _selected) //deselect piece
+            if (Board.Instance.Square[_index] != Pieces.Empty == _isSelected && _index == _selected) //deselect piece
             {
                 ResetSquareColor();
                 _isSelected = false;
@@ -102,12 +102,12 @@ namespace Assets.Scripts.UI.Cursor
 
                 if (HumanPlayer.ValidMove(int.Parse(piece.name.Remove(0, 5)), int.Parse(targetSquare.name)))
                 {
-                    Instance.MovePiece(piece, targetSquare);
+                    Board.Instance.MovePiece(piece, targetSquare);
 
-                    var computermoove = new Computer(Instance.CopyBoard());
+                    var computermoove = new Computer(Board.Instance.CopyBoard());
                     var compmove = computermoove.ChooseBestMove();
 
-                    Instance.MovePiece(GameObject.Find(string.Concat("Piece", compmove.StartSquare)), GameObject.Find(Convert.ToString(compmove.TargetSquare)));
+                    Board.Instance.MovePiece(GameObject.Find(string.Concat("Piece", compmove.StartSquare)), GameObject.Find(Convert.ToString(compmove.TargetSquare)));
                 }
             }
         }

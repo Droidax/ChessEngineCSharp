@@ -10,9 +10,9 @@ using Convert = System.Convert;
 
 namespace Assets.Scripts.Core
 {
-    public class Board
+    public class Board : Singleton<Board>
     {
-        private static Board instance;
+        //private static Board instance;
         public List<Board> MoveHistory = new List<Board>();
         public int[] Square = new int[64];
         public  Fen.LoadedFenInfo FenInfo;
@@ -29,11 +29,11 @@ namespace Assets.Scripts.Core
         public int[] AttackingSquares = new int[64];
         public bool IsInCheck;
         public int EnPassantSquare;
-        public bool WhiteCastleKingside;
-        public bool WhiteCastleQueenside;
-        public bool BlackCastleKingside;
-        public bool BlackCastleQueenside;
-
+        public bool WhiteCastleKingSide;
+        public bool WhiteCastleQueenSide;
+        public bool BlackCastleKingSide;
+        public bool BlackCastleQueenSide;
+        /*
         private Board(){ }
         public static Board Instance
         {
@@ -46,14 +46,15 @@ namespace Assets.Scripts.Core
                 return instance;
             }
         }
+        */
         public void SetNewBoard()
         {
             FenInfo = Fen.LoadPositionFromFen(Fen.StartingFen);
             EnPassantSquare = FenInfo.EnPassantSquare;
-            WhiteCastleKingside = FenInfo.WhiteCastleKingside;
-            WhiteCastleQueenside = FenInfo.BlackCastleQueenside;
-            BlackCastleKingside = FenInfo.BlackCastleKingside;
-            BlackCastleQueenside = FenInfo.BlackCastleQueenside;
+            WhiteCastleKingSide = FenInfo.WhiteCastleKingside;
+            WhiteCastleQueenSide = FenInfo.BlackCastleQueenside;
+            BlackCastleKingSide = FenInfo.BlackCastleKingside;
+            BlackCastleQueenSide = FenInfo.BlackCastleQueenside;
             Square = FenInfo.LoadedFenSquares;
             ColorToMove = FenInfo.WhiteToMove ? Pieces.White : Pieces.Black;
             opponentColor = FenInfo.WhiteToMove ? Pieces.Black : Pieces.White;
@@ -89,10 +90,10 @@ namespace Assets.Scripts.Core
             copiedBoard.friendlyColor = friendlyColor;
             copiedBoard.opponentColor = opponentColor;
             copiedBoard.EnPassantSquare = EnPassantSquare;
-            copiedBoard.WhiteCastleKingside = WhiteCastleKingside;
-            copiedBoard.WhiteCastleQueenside = WhiteCastleQueenside;
-            copiedBoard.BlackCastleKingside = BlackCastleKingside;
-            copiedBoard.BlackCastleQueenside = BlackCastleQueenside;
+            copiedBoard.WhiteCastleKingSide = WhiteCastleKingSide;
+            copiedBoard.WhiteCastleQueenSide = WhiteCastleQueenSide;
+            copiedBoard.BlackCastleKingSide = BlackCastleKingSide;
+            copiedBoard.BlackCastleQueenSide = BlackCastleQueenSide;
 
             return copiedBoard;
         }
@@ -181,10 +182,10 @@ namespace Assets.Scripts.Core
             friendlyColor = lastMove.friendlyColor;
             opponentColor = lastMove.opponentColor;
             EnPassantSquare = lastMove.EnPassantSquare;
-            WhiteCastleKingside = lastMove.WhiteCastleKingside;
-            WhiteCastleQueenside = lastMove.WhiteCastleQueenside;
-            BlackCastleKingside = lastMove.BlackCastleKingside;
-            BlackCastleQueenside = lastMove.BlackCastleQueenside;
+            WhiteCastleKingSide = lastMove.WhiteCastleKingSide;
+            WhiteCastleQueenSide = lastMove.WhiteCastleQueenSide;
+            BlackCastleKingSide = lastMove.BlackCastleKingSide;
+            BlackCastleQueenSide = lastMove.BlackCastleQueenSide;
         }
         public void MovePiece(GameObject piece, GameObject target)
         {
@@ -269,13 +270,13 @@ namespace Assets.Scripts.Core
             {
                 if (Pieces.IsColor(piece, Pieces.White))
                 {
-                    WhiteCastleKingside = false;
-                    WhiteCastleQueenside = false;
+                    WhiteCastleKingSide = false;
+                    WhiteCastleQueenSide = false;
                 }
                 else
                 {
-                    BlackCastleKingside = false;
-                    BlackCastleQueenside = false;
+                    BlackCastleKingSide = false;
+                    BlackCastleQueenSide = false;
                 }
             }
 
@@ -285,22 +286,22 @@ namespace Assets.Scripts.Core
                 {
                     if (GetPositionFromIndex(pieceIndex).Item1 != 1)
                     {
-                        WhiteCastleKingside = false;
+                        WhiteCastleKingSide = false;
                     }
                     else
                     {
-                        WhiteCastleQueenside = false;
+                        WhiteCastleQueenSide = false;
                     }
                 }
                 else
                 {
                     if (GetPositionFromIndex(pieceIndex).Item1 != 1)
                     {
-                        BlackCastleKingside = false;
+                        BlackCastleKingSide = false;
                     }
                     else
                     {
-                        BlackCastleQueenside = false;
+                        BlackCastleQueenSide = false;
                     }
                 }
             }

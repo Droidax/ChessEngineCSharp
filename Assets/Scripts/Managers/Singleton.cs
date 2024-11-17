@@ -19,7 +19,7 @@ public abstract class Singleton<T> : StaticSingleton<T> where T : MonoBehaviour
     {
         if (Instance != null)
         {
-            //Destroy(gameObject)
+            Destroy(gameObject);
             base.Awake();
         }
     }
