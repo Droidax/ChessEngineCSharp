@@ -33,6 +33,8 @@ namespace Assets.Scripts.Core
         public bool WhiteCastleQueenside;
         public bool BlackCastleKingside;
         public bool BlackCastleQueenside;
+        public GameManager.PlayerTypes WhitePlayer;
+        public GameManager.PlayerTypes BlackPlayer;
 
         private Board(){ }
         public static Board Instance
@@ -58,7 +60,6 @@ namespace Assets.Scripts.Core
             ColorToMove = FenInfo.WhiteToMove ? Pieces.White : Pieces.Black;
             opponentColor = FenInfo.WhiteToMove ? Pieces.Black : Pieces.White;
             friendlyColor = opponentColor == Pieces.White ? Pieces.Black : Pieces.White;
-
 
             for (int index = 0; index < 64; index++)
             {

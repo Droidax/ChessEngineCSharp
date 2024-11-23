@@ -24,7 +24,7 @@ namespace Assets.Scripts.UI
             Board.Instance.SetNewBoard();
             MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
             moveGenerator.GenerateLegalMoves();
-            GenerateBoard();
+            //GenerateBoard();
 
         }
         void GenerateBoard()
@@ -81,4 +81,5 @@ namespace Assets.Scripts.UI
         }
 
     }
+   
 }

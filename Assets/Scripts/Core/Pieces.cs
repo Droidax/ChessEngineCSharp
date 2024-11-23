@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Core
 {
-    public class Pieces : MonoBehaviour
+    public class Pieces
     {
         public const int Empty = 0;
         public const int Pawn = 1;

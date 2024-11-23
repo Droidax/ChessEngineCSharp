@@ -26,7 +26,7 @@ namespace Assets.Scripts.UI.Cursor
         void Awake()
         {
             ChangeCursor(cursor);
-            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
             _mainCamera = Camera.main;
             _controls = new CursorControls();
             _isSelected = false;
@@ -56,17 +56,24 @@ namespace Assets.Scripts.UI.Cursor
         private void EndedClick()
         {
             ChangeCursor(cursor);
-            DetectObject();
+            if (Instance.WhitePlayer == GameManager.PlayerTypes.Human)
+            {
+                DetectObject();
+
+            }
+            
+
+            DetectObject(); 
         }
 
         public void DetectObject()
         {
             Ray ray = _mainCamera.ScreenPointToRay(_controls.Mouse.position.ReadValue<Vector2>());
             RaycastHit2D[] hit2DAll = Physics2D.GetRayIntersectionAll(ray);
-
+            
             if (hit2DAll == null || hit2DAll.Length == 0) return;
 
-
+            
             _index = int.Parse(hit2DAll.Last().collider.name);
 
             if (Instance.Square[_index] == Pieces.Empty && _isSelected == false)
