@@ -2,6 +2,7 @@ using Assets.Scripts.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.VFX;
@@ -12,10 +13,11 @@ public class GameManager : Singleton<GameManager>
     public static event Action<GameState> OnAfterStateChanged;
     [SerializeField] private UI _spawnerPrefab;
     private UI Spawner;
-    public bool WaitingForPlayerToPlay { get; private set;}
+    private Coroutine moveCoroutine;
+    public bool WaitingForMove { get; private set; }
+    public bool MoveWasMade { get; set;}
 
     public GameState State { get; private set; }
-
 
     void Start() => ChangeState(GameState.Starting);
 
@@ -30,7 +32,7 @@ public class GameManager : Singleton<GameManager>
                 break;
 
             case GameState.WhiteTurn:
-                WhiteToMove();
+                moveCoroutine = StartCoroutine(WhiteToMove());
                 break;
 
             case GameState.BlackTurn:
@@ -67,11 +69,12 @@ public class GameManager : Singleton<GameManager>
 
         Debug.Log($"White Player: {Board.Instance.WhitePlayer}");
         Debug.Log($"Black Player: {Board.Instance.BlackPlayer}");
+        WaitingForMove = false;
 
         ChangeState(GameState.WhiteTurn);
     }
 
-    private void WhiteToMove()
+    /*private void WhiteToMove2()
     {
         MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
         moveGenerator.GenerateLegalMoves(Pieces.White);
@@ -87,6 +90,33 @@ public class GameManager : Singleton<GameManager>
             //play move
         }
         
+    }
+
+    */
+
+    IEnumerator WhiteToMove()
+    {
+        MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
+        moveGenerator.GenerateLegalMoves(Pieces.White);
+
+        if (Board.Instance.WhitePlayer == PlayerTypes.Human)
+        {
+            WaitingForMove = true;
+            yield return new WaitUntil(PlayerMadeMove);
+        }
+        else
+        {
+            Computer computer = new Computer(Board.Instance);
+            computer.ChooseBestMove();
+            //play move
+        }
+        MoveWasMade = false;
+        WaitingForMove = false;
+    }
+
+    private bool PlayerMadeMove()
+    { 
+        return MoveWasMade;
     }
 
 

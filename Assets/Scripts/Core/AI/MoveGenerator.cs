@@ -14,7 +14,7 @@ public class MoveGenerator
     public static List<Move> legalMoves;
     public static int initialRank;
     private int opponentColor;
-    private Board board;
+    public Board board { private get; set; }
 
     public MoveGenerator(Board board)
     {

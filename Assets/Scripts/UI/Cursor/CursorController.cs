@@ -56,14 +56,8 @@ namespace Assets.Scripts.UI.Cursor
         private void EndedClick()
         {
             ChangeCursor(cursor);
-            if (Instance.WhitePlayer == GameManager.PlayerTypes.Human)
-            {
+            if (Instance.WhitePlayer == GameManager.PlayerTypes.Human && GameManager.Instance.WaitingForMove)
                 DetectObject();
-
-            }
-            
-
-            DetectObject(); 
         }
 
         public void DetectObject()
@@ -73,7 +67,6 @@ namespace Assets.Scripts.UI.Cursor
             
             if (hit2DAll == null || hit2DAll.Length == 0) return;
 
-            
             _index = int.Parse(hit2DAll.Last().collider.name);
 
             if (Instance.Square[_index] == Pieces.Empty && _isSelected == false)
@@ -81,6 +74,7 @@ namespace Assets.Scripts.UI.Cursor
 
             if (Instance.Square[_index] != Pieces.Empty && _isSelected == false && Instance.ColorToMove == Pieces.White)//select piece
             {
+
                 if ( Pieces.IsColor(Instance.Square[_index], Instance.ColorToMove)) 
                 {
                     tile = GameObject.Find(Convert.ToString(_index));

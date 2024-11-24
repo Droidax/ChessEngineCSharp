@@ -15,10 +15,10 @@ namespace Assets.Scripts.Core
         private static Board instance;
         public List<Board> MoveHistory = new List<Board>();
         public int[] Square = new int[64];
-        public  Fen.LoadedFenInfo FenInfo;
+        public Fen.LoadedFenInfo FenInfo;
         public int ColorToMove;
         public int[] Offsets = { 8, -8, -1, 1, 7, -7, 9, -9 };
-        public int[] KnightOffsets = { 17, 15, 6, 10, -6, -10, -17, -15};
+        public int[] KnightOffsets = { 17, 15, 6, 10, -6, -10, -17, -15 };
         public static readonly int[][] squaresToEdge = new int[64][];
         public int opponentColor;
         public int friendlyColor;
@@ -35,6 +35,8 @@ namespace Assets.Scripts.Core
         public bool BlackCastleQueenside;
         public GameManager.PlayerTypes WhitePlayer;
         public GameManager.PlayerTypes BlackPlayer;
+        public MoveGenerator MoveGenerator { get; private set; }
+        public List<MoveGenerator.Move> LegalMoves { get; private set; }
 
         private Board(){ }
         public static Board Instance
@@ -340,27 +342,22 @@ namespace Assets.Scripts.Core
 
         public static void HighlightLegalSquare(int index)
         {
-            var movegenerator = new MoveGenerator(Instance.CopyBoard());
-            var moves = movegenerator.GenerateLegalMoves();
+            var MoveGenerator = new MoveGenerator(Instance);
+            var moves = MoveGenerator.GenerateLegalMoves();
 
             foreach (MoveGenerator.Move move in moves)
             {
-                if (move.StartSquare == index)
+                if (index == move.StartSquare)
                 {
-                    GameObject square = GameObject.Find(Convert.ToString(move.TargetSquare));
-                    square.GetComponent<Tile>().ChangeColorLegal();
+                    Actions.OnHighlightedSquare(move.TargetSquare.ToString());
                 }
             }
+
         }
 
         public static void ResetSquareColor()
         {
-            for (int i = 0; i < 64; i++)
-            {
-                GameObject square = GameObject.Find(Convert.ToString(i));
-                square.GetComponent<Tile>().ChangeColorDefault();
-
-            }
+            Actions.OnResetSquareColor();
         }
     }
 }

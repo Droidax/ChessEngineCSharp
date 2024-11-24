@@ -12,6 +12,19 @@ namespace Assets.Scripts
         private Color _defaultColor;
         private bool _isLight;
 
+        private void OnEnable()
+        {
+            Actions.OnHighlightedSquare += ChangeColorLegal;
+            Actions.OnResetSquareColor += ChangeColorDefault;
+        }
+
+        private void OnDisable()
+        {
+            Actions.OnHighlightedSquare -= ChangeColorLegal;
+            Actions.OnResetSquareColor -= ChangeColorDefault;
+
+        }
+
         public void Init(bool isLight)
         {
             _isLight = isLight;
@@ -37,8 +50,9 @@ namespace Assets.Scripts
             }
         }
 
-        public void ChangeColorLegal()
+        public void ChangeColorLegal(string Tile)
         {
+            if (Tile != name) return;
 
             if (_isLight)
             {

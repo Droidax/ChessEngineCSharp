@@ -2,26 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class StaticSingleton<T> : MonoBehaviour where T : MonoBehaviour
+public abstract class StaticSingleton<T> : MonoBehaviour where T : Component
 {
-    public static T Instance { get; private set; }
+    private static T _instance;
 
-    protected virtual void Awake()
+    public static T Instance
     {
-        Instance = this as T;
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<T>();
+
+                if (_instance == null)
+                {
+                    GameObject newGameObject = new GameObject("Auto-generated " + typeof(T));
+                    newGameObject.AddComponent<T>();
+                }
+            }
+            return _instance;
+        }
     }
 
 }
 
-public abstract class Singleton<T> : StaticSingleton<T> where T : MonoBehaviour
+public abstract class Singleton<T> : StaticSingleton<T> where T : MonoBehaviour, new()
 {
-    protected override void Awake()
-    {
-        if (Instance != null)
-        {
-            //Destroy(gameObject)
-            base.Awake();
-        }
-    }
+    //implement
 }
 

@@ -14,11 +14,10 @@ public class UI : Singleton<UI>
     [SerializeField] private Piece _piecePrefab;
     [SerializeField] private Vector3 _scale;
 
-    protected override void Awake()
+    protected void Awake()
     {
         GameObject camera = GameObject.Find("Main Camera");
         _cam = camera.transform;
-        base.Awake();
     }
 
     public void SpawnBoard()
@@ -34,7 +33,7 @@ public class UI : Singleton<UI>
                 spawnedTile.Init(isLight);
             }
         }
-        _cam.transform.position = new Vector3((float)4 - 0.5f, (float)4 - 0.5f, -10);
+        _cam.transform.position = new Vector3(4 - 0.5f, 4 - 0.5f, -10);
     }
 
     public void SpawnPieces()
@@ -50,6 +49,7 @@ public class UI : Singleton<UI>
                 spawnedPiece.transform.localScale = _scale;
             }
         }
-        _cam.transform.position = new Vector3((float)4 - 0.5f, (float)4 - 0.5f, -10);
+        _cam.transform.position = new Vector3(4 - 0.5f, 4 - 0.5f, -10);
     }
+
 }
