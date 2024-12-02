@@ -32,7 +32,7 @@ namespace Assets.Scripts
             _defaultColor = _renderer.color;
         }
 
-        public void ChangeColorDefault()
+        private void ChangeColorDefault()
         {
             _renderer.color = _defaultColor;
         }
@@ -50,7 +50,7 @@ namespace Assets.Scripts
             }
         }
 
-        public void ChangeColorLegal(string Tile)
+        private void ChangeColorLegal(string Tile)
         {
             if (Tile != name) return;
 

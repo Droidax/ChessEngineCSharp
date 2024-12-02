@@ -191,12 +191,35 @@ namespace Assets.Scripts.Core
         }
         public void MovePiece(GameObject piece, GameObject target)
         {
-            int pieceIndex = int.Parse(piece.name.Remove(0, 5));    
+            int pieceIndex = int.Parse(piece.name.Remove(0, 5));
             int targetIndex = int.Parse(target.name);
-            MakeMove(pieceIndex, targetIndex);
 
-            BoardUi.DeleteAllPieces();
-            BoardManager.GetComponent<BoardUi>().SpawnAllPieces();
+            MovePiece(pieceIndex, targetIndex);
+
+        }
+
+        public void MovePiece(MoveGenerator.Move move)
+        {
+            int pieceIndex = move.StartSquare;
+            int targetIndex = move.TargetSquare;
+
+            MovePiece(pieceIndex, targetIndex);
+        }
+
+        public void MovePiece(int pieceIndex, int targetIndex)
+        {
+            if (HumanPlayer.ValidMove(pieceIndex, targetIndex))
+            {
+                if (Instance.Square[targetIndex] != Pieces.Empty)
+                    Actions.OnDestroyPiece(targetIndex);
+
+                MakeMove(pieceIndex, targetIndex);
+
+                Actions.OnPieceMove(pieceIndex, targetIndex);
+                
+                GameManager.Instance.MoveWasMade = true;
+            }
+            ResetSquareColor();
         }
 
         public void UpdateOpponentsAttackingSquares(Board board)
@@ -340,7 +363,7 @@ namespace Assets.Scripts.Core
             return rank * 8 - (8 - file) - 1;
         }
 
-        public static void HighlightLegalSquare(int index)
+        public static void HighlightLegalSquare(int index)//move somewhere else
         {
             var MoveGenerator = new MoveGenerator(Instance);
             var moves = MoveGenerator.GenerateLegalMoves();

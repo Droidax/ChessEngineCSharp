@@ -99,17 +99,8 @@ namespace Assets.Scripts.UI.Cursor
                 targetSquare = hit2DAll.Last().collider.gameObject;
 
                 _isSelected = false;
-                ResetSquareColor();
-
-                if (HumanPlayer.ValidMove(int.Parse(piece.name.Remove(0, 5)), int.Parse(targetSquare.name)))
-                {
-                    Instance.MovePiece(piece, targetSquare);
-
-                    var computermoove = new Computer(Instance.CopyBoard());
-                    var compmove = computermoove.ChooseBestMove();
-
-                    Instance.MovePiece(GameObject.Find(string.Concat("Piece", compmove.StartSquare)), GameObject.Find(Convert.ToString(compmove.TargetSquare)));
-                }
+                
+                Instance.MovePiece(_selected, int.Parse(targetSquare.name));
             }
         }
 

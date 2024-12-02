@@ -16,8 +16,8 @@ public class GameManager : Singleton<GameManager>
     private Coroutine moveCoroutine;
     public bool WaitingForMove { get; private set; }
     public bool MoveWasMade { get; set;}
-
     public GameState State { get; private set; }
+    private Computer computer;
 
     void Start() => ChangeState(GameState.Starting);
 
@@ -36,7 +36,7 @@ public class GameManager : Singleton<GameManager>
                 break;
 
             case GameState.BlackTurn:
-                //BlackToMove();
+                moveCoroutine = StartCoroutine(BlackToMove());
                 break;
 
             case GameState.WhiteWin:
@@ -64,8 +64,11 @@ public class GameManager : Singleton<GameManager>
         Spawner.SpawnPieces();  
         State = GameState.Starting;
 
+        //add logic that changes this
         Board.Instance.WhitePlayer = PlayerTypes.Human;
         Board.Instance.BlackPlayer = PlayerTypes.Computer;
+
+        computer = new Computer(Board.Instance);
 
         Debug.Log($"White Player: {Board.Instance.WhitePlayer}");
         Debug.Log($"Black Player: {Board.Instance.BlackPlayer}");
@@ -106,14 +109,36 @@ public class GameManager : Singleton<GameManager>
         }
         else
         {
-            Computer computer = new Computer(Board.Instance);
-            computer.ChooseBestMove();
-            //play move
+            computer.SetBoard(Board.Instance);
+            Board.Instance.MovePiece(computer.ChooseBestMove());
         }
         MoveWasMade = false;
         WaitingForMove = false;
-    }
 
+        //check for mate
+        ChangeState(GameState.BlackTurn);
+    }
+    IEnumerator BlackToMove()
+    {
+        MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
+        moveGenerator.GenerateLegalMoves(Pieces.White);
+
+        if (Board.Instance.BlackPlayer == PlayerTypes.Human)
+        {
+            WaitingForMove = true;
+            yield return new WaitUntil(PlayerMadeMove);
+        }
+        else
+        {
+            computer.SetBoard(Board.Instance);
+            Board.Instance.MovePiece(computer.ChooseBestMove());
+        }
+        MoveWasMade = false;
+        WaitingForMove = false;
+
+        //check for mate
+        ChangeState(GameState.WhiteTurn);
+    }
     private bool PlayerMadeMove()
     { 
         return MoveWasMade;
