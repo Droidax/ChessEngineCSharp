@@ -64,11 +64,7 @@ public class GameManager : Singleton<GameManager>
         Spawner.SpawnPieces();  
         State = GameState.Starting;
 
-        //add logic that changes this
-        Board.Instance.WhitePlayer = PlayerTypes.Human;
-        Board.Instance.BlackPlayer = PlayerTypes.Computer;
-
-        computer = new Computer(Board.Instance);
+        SetPlayers(PlayerTypes.Human, PlayerTypes.Computer);
 
         Debug.Log($"White Player: {Board.Instance.WhitePlayer}");
         Debug.Log($"Black Player: {Board.Instance.BlackPlayer}");
@@ -110,7 +106,7 @@ public class GameManager : Singleton<GameManager>
         else
         {
             computer.SetBoard(Board.Instance);
-            Board.Instance.MovePiece(computer.ChooseBestMove());
+            Board.Instance.MovePiece(computer.ChooseBestMove(), true);
         }
         MoveWasMade = false;
         WaitingForMove = false;
@@ -131,7 +127,7 @@ public class GameManager : Singleton<GameManager>
         else
         {
             computer.SetBoard(Board.Instance);
-            Board.Instance.MovePiece(computer.ChooseBestMove());
+            Board.Instance.MovePiece(computer.ChooseBestMove(), true);
         }
         MoveWasMade = false;
         WaitingForMove = false;
@@ -142,6 +138,17 @@ public class GameManager : Singleton<GameManager>
     private bool PlayerMadeMove()
     { 
         return MoveWasMade;
+    }
+
+    private void SetPlayers(PlayerTypes white, PlayerTypes black)
+    {
+        Board.Instance.WhitePlayer = white;
+        Board.Instance.BlackPlayer = black;
+
+        if (white == PlayerTypes.Computer || black == PlayerTypes.Computer)
+        {
+            computer = new Computer(Board.Instance);
+        }
     }
 
 

@@ -140,6 +140,7 @@ namespace Assets.Scripts.Core
                 {
                     Square[startIndex - 1] = Square[startIndex - 4];
                     Square[startIndex - 4] = Pieces.Empty;
+
                 }
             }
 
@@ -158,6 +159,80 @@ namespace Assets.Scripts.Core
                 if (Pieces.IsColor(Square[targetIndex], Pieces.White))
                     whiteKingIndex = targetIndex;
                 
+                else
+                    blackKingIndex = targetIndex;
+            }
+
+            ColorToMove = opponentColor;
+            opponentColor = friendlyColor;
+            friendlyColor = ColorToMove;
+        }
+
+        private void MakeMoveAndUpdateVisuals(int startIndex, int targetIndex)
+        {
+            var copiedBoard = CopyBoard();
+            MoveHistory.Add(copiedBoard);
+
+            //en passant
+            if (Pieces.IsType(Square[startIndex], Pieces.Pawn) && targetIndex == EnPassantSquare)
+            {
+                Square[targetIndex + (ColorToMove == Pieces.White ? -8 : 8)] = Pieces.Empty;
+                Actions.OnDestroyPiece(targetIndex + (ColorToMove == Pieces.White ? -8 : 8));
+
+            }
+            if (Pieces.IsType(Square[startIndex], Pieces.Pawn) && startIndex + (ColorToMove == Pieces.White ? 16 : -16) == targetIndex)
+            {
+                EnPassantSquare = startIndex + (ColorToMove == Pieces.White ? 8 : -8);
+            }
+            else
+            {
+                EnPassantSquare = 65;
+            }
+
+            //castling
+            if (Pieces.IsType(Square[targetIndex], Pieces.Rook))
+            {
+                UpdateCastlingRights(targetIndex);
+            }
+            if (Pieces.IsType(Square[startIndex], Pieces.King) || Pieces.IsType(Square[startIndex], Pieces.Rook))
+            {
+                UpdateCastlingRights(startIndex);
+            }
+            if (Pieces.IsType(Square[startIndex], Pieces.King) && math.abs(startIndex - targetIndex) == 2)
+            {
+                if (targetIndex > startIndex)
+                {
+                    Square[startIndex + 1] = Square[startIndex + 3];
+                    Square[startIndex + 3] = Pieces.Empty;
+
+                    Actions.OnPieceMove(startIndex + 3, startIndex + 1);
+                }
+                else
+                {
+                    Square[startIndex - 1] = Square[startIndex - 4];
+                    Square[startIndex - 4] = Pieces.Empty;
+
+                    Actions.OnPieceMove(startIndex - 4, startIndex - 1);
+                }
+            }
+
+            Square[targetIndex] = Square[startIndex];
+            Square[startIndex] = Pieces.Empty;
+
+            //pawn promotion
+            if (Pieces.IsType(Square[targetIndex], Pieces.Pawn) && squaresToEdge[targetIndex][ColorToMove == Pieces.White ? 0 : 1] == 0)
+            {
+                PromotePawn(targetIndex, promoteTo);
+                GameObject.Find("Piece" + startIndex).GetComponent<Piece>().ChangeSprite(Pieces.GetColor(Square[targetIndex]), promoteTo);
+
+            }
+
+            //king index update
+            if (Pieces.IsType(Square[targetIndex], Pieces.King))
+            {
+                if (Pieces.IsColor(Square[targetIndex], Pieces.White))
+                    whiteKingIndex = targetIndex;
+
                 else
                     blackKingIndex = targetIndex;
             }
@@ -198,12 +273,15 @@ namespace Assets.Scripts.Core
 
         }
 
-        public void MovePiece(MoveGenerator.Move move)
+        public void MovePiece(MoveGenerator.Move move, bool updateVisuals)
         {
             int pieceIndex = move.StartSquare;
             int targetIndex = move.TargetSquare;
 
-            MovePiece(pieceIndex, targetIndex);
+            if (updateVisuals)
+            {
+                MovePiece(pieceIndex, targetIndex, updateVisuals);
+            }
         }
 
         public void MovePiece(int pieceIndex, int targetIndex)
@@ -220,6 +298,29 @@ namespace Assets.Scripts.Core
                 GameManager.Instance.MoveWasMade = true;
             }
             ResetSquareColor();
+        }
+
+        public void MovePiece(int pieceIndex, int targetIndex, bool updateVisuals)
+        {
+            if (!updateVisuals)
+            {
+                MovePiece(pieceIndex, targetIndex);
+                return;
+            }
+
+            if (HumanPlayer.ValidMove(pieceIndex, targetIndex))
+            {
+                if (Instance.Square[targetIndex] != Pieces.Empty)
+                    Actions.OnDestroyPiece(targetIndex);
+
+                MakeMoveAndUpdateVisuals(pieceIndex, targetIndex);
+
+                Actions.OnPieceMove(pieceIndex, targetIndex);
+
+                GameManager.Instance.MoveWasMade = true;
+            }
+            ResetSquareColor();
+
         }
 
         public void UpdateOpponentsAttackingSquares(Board board)

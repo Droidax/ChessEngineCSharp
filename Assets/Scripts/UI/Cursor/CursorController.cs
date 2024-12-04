@@ -72,7 +72,7 @@ namespace Assets.Scripts.UI.Cursor
             if (Instance.Square[_index] == Pieces.Empty && _isSelected == false)
                 return;
 
-            if (Instance.Square[_index] != Pieces.Empty && _isSelected == false && Instance.ColorToMove == Pieces.White)//select piece
+            if (Instance.Square[_index] != Pieces.Empty && _isSelected == false && GameManager.Instance.WaitingForMove)//select piece
             {
 
                 if ( Pieces.IsColor(Instance.Square[_index], Instance.ColorToMove)) 
@@ -100,7 +100,7 @@ namespace Assets.Scripts.UI.Cursor
 
                 _isSelected = false;
                 
-                Instance.MovePiece(_selected, int.Parse(targetSquare.name));
+                Instance.MovePiece(_selected, int.Parse(targetSquare.name), true);
             }
         }
 
