@@ -56,8 +56,24 @@ namespace Assets.Scripts.UI.Cursor
         private void EndedClick()
         {
             ChangeCursor(cursor);
-            if (Instance.WhitePlayer == GameManager.PlayerTypes.Human && GameManager.Instance.WaitingForMove)
-                DetectObject();
+            if (!GameManager.Instance.WaitingForMove)
+                return;
+            
+            if (Instance.ColorToMove == Pieces.White)
+            {
+                if (Instance.WhitePlayer == GameManager.PlayerTypes.Human)
+                {
+                    DetectObject();
+                }
+            }
+
+            if (Instance.ColorToMove == Pieces.Black)
+            {
+                if (Instance.BlackPlayer == GameManager.PlayerTypes.Human)
+                {
+                    DetectObject();
+                }
+            }
         }
 
         public void DetectObject()

@@ -40,9 +40,11 @@ public class GameManager : Singleton<GameManager>
                 break;
 
             case GameState.WhiteWin:
+                WhiteWin();
                 break;
 
             case GameState.BlackWin:
+                BlackWin();
                 break;
 
             default:
@@ -64,11 +66,12 @@ public class GameManager : Singleton<GameManager>
         Spawner.SpawnPieces();  
         State = GameState.Starting;
 
-        SetPlayers(PlayerTypes.Human, PlayerTypes.Computer);
+        SetPlayers(PlayerTypes.Computer, PlayerTypes.Human);
 
         Debug.Log($"White Player: {Board.Instance.WhitePlayer}");
         Debug.Log($"Black Player: {Board.Instance.BlackPlayer}");
         WaitingForMove = false;
+        MoveWasMade = false;
 
         ChangeState(GameState.WhiteTurn);
     }
@@ -135,6 +138,16 @@ public class GameManager : Singleton<GameManager>
         //check for mate
         ChangeState(GameState.WhiteTurn);
     }
+
+    private void WhiteWin()
+    {
+
+    }
+    private void BlackWin()
+    {
+
+    }
+
     private bool PlayerMadeMove()
     { 
         return MoveWasMade;

@@ -25,7 +25,7 @@ namespace Assets.Scripts.UI
             Actions.OnDestroyPiece -= DestroySelf;
 
         }
-        void Start()
+        void Awake()
         {
             rb2d = GetComponent<Rigidbody2D>();
         }
