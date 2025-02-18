@@ -44,6 +44,7 @@ namespace Assets.Scripts.UI
                 return;
 
             rb2d.transform.position = GameObject.Find(targetIndex.ToString()).transform.position;
+            rb2d.transform.position = new Vector3(rb2d.transform.position.x, rb2d.transform.position.y, -1);
             name = "Piece" + Convert.ToString(targetIndex);
         }
         

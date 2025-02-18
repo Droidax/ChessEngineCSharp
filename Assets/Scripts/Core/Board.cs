@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using Assets.Scripts.UI;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using static GameManager;
+using static MoveGenerator;
 using Convert = System.Convert;
 
 namespace Assets.Scripts.Core
@@ -38,6 +41,12 @@ namespace Assets.Scripts.Core
         public MoveGenerator MoveGenerator { get; private set; }
         public List<MoveGenerator.Move> LegalMoves { get; private set; }
 
+        public int halfmoveCount { get; private set; }
+        public int fullmoveCount { get; private set; }
+
+        private Dictionary<string, int> boardPositions = new Dictionary<string, int>();
+
+
         private Board(){ }
         public static Board Instance
         {
@@ -61,6 +70,8 @@ namespace Assets.Scripts.Core
             Square = FenInfo.LoadedFenSquares;
             ColorToMove = FenInfo.WhiteToMove ? Pieces.White : Pieces.Black;
             opponentColor = FenInfo.WhiteToMove ? Pieces.Black : Pieces.White;
+            halfmoveCount = FenInfo.FullMoveCounter;
+            fullmoveCount = FenInfo.FullMoveCounter;
             friendlyColor = opponentColor == Pieces.White ? Pieces.Black : Pieces.White;
 
             for (int index = 0; index < 64; index++)
@@ -96,6 +107,9 @@ namespace Assets.Scripts.Core
             copiedBoard.WhiteCastleQueenside = WhiteCastleQueenside;
             copiedBoard.BlackCastleKingside = BlackCastleKingside;
             copiedBoard.BlackCastleQueenside = BlackCastleQueenside;
+            copiedBoard.halfmoveCount = halfmoveCount;
+            copiedBoard.fullmoveCount = fullmoveCount;
+            copiedBoard.boardPositions = new Dictionary<string, int>(boardPositions);
 
             return copiedBoard;
         }
@@ -124,10 +138,12 @@ namespace Assets.Scripts.Core
             if (Pieces.IsType(Square[targetIndex], Pieces.Rook))
             {
                 UpdateCastlingRights(targetIndex);
+                ResetHalfMoveCounter();
             }
             if (Pieces.IsType(Square[startIndex], Pieces.King) || Pieces.IsType(Square[startIndex], Pieces.Rook))
             {
                 UpdateCastlingRights(startIndex);
+                ResetHalfMoveCounter();
             }
             if (Pieces.IsType(Square[startIndex], Pieces.King) && math.abs(startIndex - targetIndex) == 2)
             {
@@ -163,9 +179,25 @@ namespace Assets.Scripts.Core
                     blackKingIndex = targetIndex;
             }
 
+            if (ColorToMove == Pieces.Black)
+            {
+                fullmoveCount++;
+            }
+
+            if (Pieces.GetPieceType(Square[startIndex]) == Pieces.Pawn || Square[targetIndex] != 0)
+            {
+                ResetHalfMoveCounter();
+            }
+            else
+            {
+                IncrementHalfMoveCounter();
+            }
+
             ColorToMove = opponentColor;
             opponentColor = friendlyColor;
             friendlyColor = ColorToMove;
+
+            UpdateBoardPositionHistory();
         }
 
         private void MakeMoveAndUpdateVisuals(int startIndex, int targetIndex)
@@ -193,10 +225,12 @@ namespace Assets.Scripts.Core
             if (Pieces.IsType(Square[targetIndex], Pieces.Rook))
             {
                 UpdateCastlingRights(targetIndex);
+                ResetHalfMoveCounter();
             }
             if (Pieces.IsType(Square[startIndex], Pieces.King) || Pieces.IsType(Square[startIndex], Pieces.Rook))
             {
                 UpdateCastlingRights(startIndex);
+                ResetHalfMoveCounter();
             }
             if (Pieces.IsType(Square[startIndex], Pieces.King) && math.abs(startIndex - targetIndex) == 2)
             {
@@ -237,9 +271,52 @@ namespace Assets.Scripts.Core
                     blackKingIndex = targetIndex;
             }
 
+            if (ColorToMove == Pieces.Black)
+            {
+                fullmoveCount++;
+            }
+
+            if (Pieces.GetPieceType(Square[startIndex]) == Pieces.Pawn || Square[targetIndex] != 0)
+            {
+                ResetHalfMoveCounter();
+            }
+            else
+            {
+                IncrementHalfMoveCounter();
+            }
+
             ColorToMove = opponentColor;
             opponentColor = friendlyColor;
             friendlyColor = ColorToMove;
+
+            UpdateBoardPositionHistory();
+        }
+
+        public string GetBoardHash()
+        {
+            string fen = Fen.GetShorterFen(this);
+
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(fen);
+                byte[] hashBytes = sha256.ComputeHash(inputBytes);
+
+                StringBuilder sb = new StringBuilder();
+                foreach (byte b in hashBytes)
+                    sb.Append(b.ToString("X2"));
+
+                return sb.ToString();
+            }
+        }
+
+        private void ResetHalfMoveCounter()
+        {
+            halfmoveCount = 0;
+        }
+
+        private void IncrementHalfMoveCounter()
+        {
+            halfmoveCount++;
         }
 
         public void UnmakeMove()
@@ -263,6 +340,9 @@ namespace Assets.Scripts.Core
             WhiteCastleQueenside = lastMove.WhiteCastleQueenside;
             BlackCastleKingside = lastMove.BlackCastleKingside;
             BlackCastleQueenside = lastMove.BlackCastleQueenside;
+            halfmoveCount = lastMove.halfmoveCount;
+            fullmoveCount = lastMove.fullmoveCount;
+            boardPositions = new Dictionary<string, int>(lastMove.boardPositions);
         }
         public void MovePiece(GameObject piece, GameObject target)
         {
@@ -432,8 +512,6 @@ namespace Assets.Scripts.Core
                 }
             }
         }
-
-
         static void ComputeSquaresToEdge()
         {
             for (int file = 0; file < 8; file++)
@@ -455,16 +533,16 @@ namespace Assets.Scripts.Core
             }
         }
 
-        public static (int, int) GetPositionFromIndex(int squareIndex)// rank, file
+        public static (int rank, int file) GetPositionFromIndex(int squareIndex)// rank, file
         {
             return (squareIndex % 8 + 1, squareIndex / 8 + 1);
         }
-        public static int GetIndexFromPosition(int file, int rank)
+        public static int GetIndexFromPosition(int file, int rank) //file a rank v rozmezí 1 až 8
         {
             return rank * 8 - (8 - file) - 1;
         }
 
-        public static void HighlightLegalSquare(int index)//move somewhere else
+        public static void HighlightLegalSquare(int index)
         {
             var MoveGenerator = new MoveGenerator(Instance);
             var moves = MoveGenerator.GenerateLegalMoves();
@@ -483,5 +561,62 @@ namespace Assets.Scripts.Core
         {
             Actions.OnResetSquareColor();
         }
+        
+        public void UpdateBoardPositionHistory()
+        {
+            string positionHash = GetBoardHash();
+
+            if (boardPositions.ContainsKey(positionHash))
+                boardPositions[positionHash]++;
+            else
+                boardPositions[positionHash] = 1;
+        }
+
+        private bool CheckThreefoldRepetition()
+        {
+            string positionHash = GetBoardHash();
+            Debug.Log(boardPositions[positionHash]);
+            return boardPositions.ContainsKey(positionHash) && boardPositions[positionHash] >= 3;
+        }
+
+        public GameState EvaluateGameCondition()
+        {
+
+            if (CheckThreefoldRepetition())
+            {
+                return GameState.Draw;
+            }
+
+            if (halfmoveCount >= 50)
+            {
+                return GameState.Draw;
+            }
+
+            MoveGenerator moveGenerator = new MoveGenerator(this);
+            List<Move> legalMoves = moveGenerator.GenerateLegalMoves();
+
+            if (legalMoves.Count == 0)
+            {
+                if (IsInCheck)
+                {
+                    // Šach mat
+                    if (ColorToMove == Pieces.White)
+                        return GameState.BlackWin;
+
+                    return GameState.WhiteWin;
+                }
+
+                // Pat
+                return GameState.Draw;
+            }
+
+            if (ColorToMove == Pieces.White)
+            {
+                return GameState.WhiteTurn;
+            }
+
+            return GameState.BlackTurn;
+        }
     }
+
 }

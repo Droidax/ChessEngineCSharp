@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.VFX;
+using static MoveGenerator;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -47,6 +48,10 @@ public class GameManager : Singleton<GameManager>
                 BlackWin();
                 break;
 
+            case GameState.Draw:
+                Draw();
+                break;
+
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
             
@@ -66,36 +71,22 @@ public class GameManager : Singleton<GameManager>
         Spawner.SpawnPieces();  
         State = GameState.Starting;
 
-        SetPlayers(PlayerTypes.Computer, PlayerTypes.Human);
+        SetPlayers(PlayerTypes.Human, PlayerTypes.Computer);
 
         Debug.Log($"White Player: {Board.Instance.WhitePlayer}");
         Debug.Log($"Black Player: {Board.Instance.BlackPlayer}");
         WaitingForMove = false;
         MoveWasMade = false;
 
-        ChangeState(GameState.WhiteTurn);
-    }
-
-    /*private void WhiteToMove2()
-    {
-        MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
-        moveGenerator.GenerateLegalMoves(Pieces.White);
-
-        if (Board.Instance.WhitePlayer == PlayerTypes.Human)
+        if (Board.Instance.ColorToMove == Pieces.White)
         {
-            WaitingForPlayerToPlay = true;
+            ChangeState(GameState.WhiteTurn);
         }
         else
         {
-            Computer computer = new Computer(Board.Instance);
-            computer.ChooseBestMove();
-            //play move
+            ChangeState(GameState.BlackTurn);
         }
-        
     }
-
-    */
-
     IEnumerator WhiteToMove()
     {
         MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
@@ -114,8 +105,9 @@ public class GameManager : Singleton<GameManager>
         MoveWasMade = false;
         WaitingForMove = false;
 
-        //check for mate
-        ChangeState(GameState.BlackTurn);
+        Board.Instance.UpdateOpponentsAttackingSquares(Board.Instance);
+        ChangeState(Board.Instance.EvaluateGameCondition());
+        
     }
     IEnumerator BlackToMove()
     {
@@ -135,15 +127,21 @@ public class GameManager : Singleton<GameManager>
         MoveWasMade = false;
         WaitingForMove = false;
 
-        //check for mate
-        ChangeState(GameState.WhiteTurn);
+        Board.Instance.UpdateOpponentsAttackingSquares(Board.Instance);
+        ChangeState(Board.Instance.EvaluateGameCondition());
     }
 
     private void WhiteWin()
     {
 
     }
+
     private void BlackWin()
+    {
+
+    }
+
+    private void Draw()
     {
 
     }
@@ -164,14 +162,14 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-
     public enum GameState
     {
         Starting = 0,
         WhiteTurn = 1,
         BlackTurn = 2,
         WhiteWin = 3,
-        BlackWin = 4
+        BlackWin = 4,
+        Draw = 5
 
     }
 
