@@ -39,12 +39,13 @@ namespace Assets.Scripts.Core
         public GameManager.PlayerTypes WhitePlayer;
         public GameManager.PlayerTypes BlackPlayer;
         public MoveGenerator MoveGenerator { get; private set; }
-        public List<MoveGenerator.Move> LegalMoves { get; private set; }
 
         public int halfmoveCount { get; private set; }
         public int fullmoveCount { get; private set; }
 
         private Dictionary<string, int> boardPositions = new Dictionary<string, int>();
+
+        public int MoveGeneratorIterationCouter;
 
 
         private Board(){ }
@@ -88,6 +89,7 @@ namespace Assets.Scripts.Core
             }
 
             ComputeSquaresToEdge();
+            Instance.MoveGeneratorIterationCouter = 0;
         }
 
         public Board CopyBoard()
@@ -366,7 +368,9 @@ namespace Assets.Scripts.Core
 
         public void MovePiece(int pieceIndex, int targetIndex)
         {
-            if (HumanPlayer.ValidMove(pieceIndex, targetIndex))
+            HumanPlayer humanPlayer = new HumanPlayer(this);
+
+            if (humanPlayer.ValidMove(pieceIndex, targetIndex))
             {
                 if (Instance.Square[targetIndex] != Pieces.Empty)
                     Actions.OnDestroyPiece(targetIndex);
@@ -382,13 +386,15 @@ namespace Assets.Scripts.Core
 
         public void MovePiece(int pieceIndex, int targetIndex, bool updateVisuals)
         {
+            HumanPlayer humanPlayer = new HumanPlayer(this);
+
             if (!updateVisuals)
             {
                 MovePiece(pieceIndex, targetIndex);
                 return;
             }
 
-            if (HumanPlayer.ValidMove(pieceIndex, targetIndex))
+            if (humanPlayer.ValidMove(pieceIndex, targetIndex))
             {
                 if (Instance.Square[targetIndex] != Pieces.Empty)
                     Actions.OnDestroyPiece(targetIndex);
@@ -406,12 +412,12 @@ namespace Assets.Scripts.Core
         public void UpdateOpponentsAttackingSquares(Board board)
         {
             MoveGenerator moveGenerator = new MoveGenerator(board);
-            List<MoveGenerator.Move> moves = moveGenerator.GeneratePseudoMoves(board.opponentColor);
+            moveGenerator.GeneratePseudoMoves(board.opponentColor);
             AttackingSquares = new int[64];
-            if (MoveGenerator.pseudoMoves == null)
+            if (moveGenerator.pseudoMoves == null)
                 return;
 
-            foreach (MoveGenerator.Move move in moves)
+            foreach (MoveGenerator.Move move in moveGenerator.pseudoMoves)
             {
                 board.AttackingSquares[move.TargetSquare] = 1;
             }
@@ -544,10 +550,10 @@ namespace Assets.Scripts.Core
 
         public static void HighlightLegalSquare(int index)
         {
-            var MoveGenerator = new MoveGenerator(Instance);
-            var moves = MoveGenerator.GenerateLegalMoves();
+            MoveGenerator moveGenerator = new MoveGenerator(Instance);
+            moveGenerator.GenerateLegalMoves();
 
-            foreach (MoveGenerator.Move move in moves)
+            foreach (MoveGenerator.Move move in moveGenerator.legalMoves)
             {
                 if (index == move.StartSquare)
                 {
@@ -593,9 +599,9 @@ namespace Assets.Scripts.Core
             }
 
             MoveGenerator moveGenerator = new MoveGenerator(this);
-            List<Move> legalMoves = moveGenerator.GenerateLegalMoves();
+            moveGenerator.GenerateLegalMoves();
 
-            if (legalMoves.Count == 0)
+            if (moveGenerator.legalMoves.Count == 0)
             {
                 if (IsInCheck)
                 {

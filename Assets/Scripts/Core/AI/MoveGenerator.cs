@@ -10,14 +10,16 @@ using System.Linq;
 
 public class MoveGenerator
 {
-    public static List<Move> pseudoMoves;
-    public static List<Move> legalMoves;
-    public static int initialRank;
+    public List<Move> pseudoMoves;
+    public List<Move> legalMoves;
+    public int initialRank;
     private int opponentColor;
     public Board board { private get; set; }
 
     public MoveGenerator(Board board)
     {
+        pseudoMoves = new List<Move>();
+        legalMoves = new List<Move>();
         this.board = board;
     }
     public struct Move
@@ -31,17 +33,18 @@ public class MoveGenerator
         public int TargetSquare { get; set; }
     }
     
-    public List<Move> GeneratePseudoMoves()
+    public void GeneratePseudoMoves()
     {
-        return GeneratePseudoMoves(board.friendlyColor);
+        GeneratePseudoMoves(board.friendlyColor);
     }
 
-    public List<Move> GeneratePseudoMoves(int color)
+    public void GeneratePseudoMoves(int color)
     {
+        pseudoMoves.Clear();
+
+        Board.Instance.MoveGeneratorIterationCouter++;
         initialRank = color == Pieces.White ? 2 : 7;
         opponentColor = color == Pieces.White ? Pieces.Black : Pieces.White;
-        pseudoMoves = new List<Move>();
-
 
         for (int startSquare = 0; startSquare < 64; startSquare++)
         {
@@ -70,32 +73,31 @@ public class MoveGenerator
                     GeneratePawnMoves(startSquare, color);
                 }
 
- 
-
             }
         }
+
         GenerateCastling(color);
-        return pseudoMoves;
     }
 
-    public List<Move> GenerateLegalMoves()
+    public void GenerateLegalMoves()
     {
-        return GenerateLegalMoves(board.friendlyColor);
+        GenerateLegalMoves(board.friendlyColor);
     }
 
-    public List<Move> GenerateLegalMoves(int color)
+    public void GenerateLegalMoves(int color)
     {
-        legalMoves = new List<Move>();
+        legalMoves.Clear();
+
         board.UpdateOpponentsAttackingSquares(board);
-        List<Move> pseudoLegalMoves = GeneratePseudoMoves();
+        GeneratePseudoMoves();
 
-        foreach (Move pseudoLegalMove in pseudoLegalMoves)
+        foreach (Move pseudoLegalMove in pseudoMoves)
         {
             board.MakeMove(pseudoLegalMove.StartSquare, pseudoLegalMove.TargetSquare);
 
             MoveGenerator moveGenerator = new MoveGenerator(board);
-            List<Move> responses = moveGenerator.GeneratePseudoMoves();
-            if (responses.Any( move => move.TargetSquare == (color == Pieces.White ? board.whiteKingIndex : board.blackKingIndex)))
+            moveGenerator.GeneratePseudoMoves();
+            if (moveGenerator.pseudoMoves.Any( move => move.TargetSquare == (color == Pieces.White ? board.whiteKingIndex : board.blackKingIndex)))
             {
                 //pokud by pohl zabrat krale, tak se pocita jako nelegalni tah
             }
@@ -106,7 +108,6 @@ public class MoveGenerator
 
             board.UnmakeMove();
         }
-        return legalMoves;
     }
 
     public void GenerateSlidingMoves(int starSquare, int piece, int color)

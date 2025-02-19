@@ -6,14 +6,25 @@ using System.Linq;
 using Assets.Scripts.Core;
 using UnityEngine;
 
-public static class HumanPlayer
+public class HumanPlayer
 {
-    public static bool ValidMove(int startSquare, int targetSquare)
+    private Board board;
+    private MoveGenerator moveGenerator;
+    public HumanPlayer(Board board)
     {
-        var movegenerator = new MoveGenerator(Board.Instance.CopyBoard());
-        var moves = movegenerator.GenerateLegalMoves();
+        this.board = board;
+        moveGenerator = new MoveGenerator(board);
+    }
 
-        foreach (MoveGenerator.Move move in moves)
+    public void SetBoard(Board newBoard)
+    {
+        this.board = newBoard;
+    }
+    public bool ValidMove(int startSquare, int targetSquare)
+    {
+        moveGenerator.GenerateLegalMoves();
+
+        foreach (MoveGenerator.Move move in moveGenerator.legalMoves)
         {
             if (move.StartSquare == startSquare && move.TargetSquare == targetSquare)
             {

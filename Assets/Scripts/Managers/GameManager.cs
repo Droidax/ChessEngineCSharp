@@ -71,7 +71,7 @@ public class GameManager : Singleton<GameManager>
         Spawner.SpawnPieces();  
         State = GameState.Starting;
 
-        SetPlayers(PlayerTypes.Human, PlayerTypes.Computer);
+        SetPlayers(PlayerTypes.Human, PlayerTypes.Human);
 
         Debug.Log($"White Player: {Board.Instance.WhitePlayer}");
         Debug.Log($"Black Player: {Board.Instance.BlackPlayer}");
@@ -89,8 +89,6 @@ public class GameManager : Singleton<GameManager>
     }
     IEnumerator WhiteToMove()
     {
-        MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
-        moveGenerator.GenerateLegalMoves(Pieces.White);
 
         if (Board.Instance.WhitePlayer == PlayerTypes.Human)
         {
@@ -107,12 +105,13 @@ public class GameManager : Singleton<GameManager>
 
         Board.Instance.UpdateOpponentsAttackingSquares(Board.Instance);
         ChangeState(Board.Instance.EvaluateGameCondition());
-        
+
+        Debug.Log(Board.Instance.MoveGeneratorIterationCouter);
+        Board.Instance.MoveGeneratorIterationCouter = 0;
+
     }
     IEnumerator BlackToMove()
     {
-        MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
-        moveGenerator.GenerateLegalMoves(Pieces.White);
 
         if (Board.Instance.BlackPlayer == PlayerTypes.Human)
         {
@@ -129,6 +128,8 @@ public class GameManager : Singleton<GameManager>
 
         Board.Instance.UpdateOpponentsAttackingSquares(Board.Instance);
         ChangeState(Board.Instance.EvaluateGameCondition());
+        Debug.Log(Board.Instance.MoveGeneratorIterationCouter);
+        Board.Instance.MoveGeneratorIterationCouter = 0;
     }
 
     private void WhiteWin()
