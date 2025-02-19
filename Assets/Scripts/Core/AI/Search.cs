@@ -28,8 +28,8 @@ public class Search
         var bestMove = new Move();
 
         var moveGenerator = new MoveGenerator(board);
-        moveGenerator.GenerateLegalMoves();
-        foreach (Move move in moveGenerator.legalMoves)
+        List<Move> moves = moveGenerator.GenerateLegalMoves();
+        foreach (Move move in moves)
         {
             board.CopyBoard();
             board.MakeMove(move.StartSquare, move.TargetSquare);
@@ -60,8 +60,8 @@ public class Search
         if (depth == 0) return -evaluation.EvaluateCurrentPosition();
 
         var moveGenerator = new MoveGenerator(board);
-        moveGenerator.GenerateLegalMoves();
-        foreach (Move move in moveGenerator.legalMoves)
+        List<Move> moves = moveGenerator.GenerateLegalMoves();
+        foreach (Move move in moves)
         {
             board.CopyBoard();
             board.MakeMove(move.StartSquare, move.TargetSquare);

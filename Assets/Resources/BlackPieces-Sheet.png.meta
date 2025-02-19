@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2004c7bf6fe0a234eba03fa2f3492d51
+guid: 54c6fb0a96ab3dc41af34694c58a404e
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -44,11 +44,11 @@ TextureImporter:
   lightmap: 0
   compressionQuality: 50
   spriteMode: 2
-  spriteExtrude: 1
+  spriteExtrude: 0
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -69,19 +69,6 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -123,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: White_Pawn
+      name: BlackPawn
       rect:
         serializedVersion: 2
-        x: 2
+        x: 1
         y: 0
-        width: 12
-        height: 14
+        width: 14
+        height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,20 +124,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bbaddf0102d206846a5abf9c658a01f5
-      internalID: -511881433
+      spriteID: 7fcd7813cc19f50408ccf4343771c9c8
+      internalID: 1611472044
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: White_Knight
+      name: BlackKnight
       rect:
         serializedVersion: 2
         x: 17
         y: 0
-        width: 13
-        height: 16
+        width: 14
+        height: 20
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,20 +145,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aa5d4fd110ed84741a440fcca406c3d6
-      internalID: -47729564
+      spriteID: 190df5107dffb6540a7a91ffea3e9629
+      internalID: -772717036
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: White_Rook
+      name: BlackRook
       rect:
         serializedVersion: 2
-        x: 34
+        x: 33
         y: 0
-        width: 12
-        height: 15
+        width: 14
+        height: 19
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -179,20 +166,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f0a4a635750d2504fa2759c7294ff6c3
-      internalID: 666616765
+      spriteID: 08cf829eccc534a44a4c0700cfd6a616
+      internalID: -221056796
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: White_Bishop
+      name: BlackBishop
       rect:
         serializedVersion: 2
-        x: 50
+        x: 49
         y: 0
-        width: 12
-        height: 16
+        width: 14
+        height: 21
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,20 +187,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1712223beddd86648a6ac6aa7fa650c6
-      internalID: 1851602068
+      spriteID: da6c08b153ddce84ca774c0d37fdacc6
+      internalID: 1255163923
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: White_Queen
+      name: BalckKing
       rect:
         serializedVersion: 2
-        x: 66
+        x: 65
         y: 0
-        width: 12
-        height: 16
+        width: 14
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -221,20 +208,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 099d9081f27caa243ac79ccb24faad36
-      internalID: 557131858
+      spriteID: 484574deaf4393549ad0f86086269172
+      internalID: 367526459
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: White_King
+      name: BlackQueen
       rect:
         serializedVersion: 2
-        x: 82
+        x: 81
         y: 0
-        width: 12
-        height: 16
+        width: 14
+        height: 26
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -242,8 +229,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a77c6d8f9a5bcac4cb27967eaa056701
-      internalID: -1373487187
+      spriteID: 7fe7ac9b45661294d997ea2b44b145ed
+      internalID: 597933362
       vertices: []
       indices: 
       edges: []
@@ -259,12 +246,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      White_Bishop: 1851602068
-      White_King: -1373487187
-      White_Knight: -47729564
-      White_Pawn: -511881433
-      White_Queen: 557131858
-      White_Rook: 666616765
+      BalckKing: 367526459
+      BlackBishop: 1255163923
+      BlackKnight: -772717036
+      BlackPawn: 1611472044
+      BlackQueen: 597933362
+      BlackRook: -221056796
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

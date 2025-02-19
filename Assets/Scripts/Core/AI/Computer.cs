@@ -18,7 +18,7 @@ public class Computer
     public Computer(Board board)
     {
         this.board = board;
-        moveGenerator = new MoveGenerator(board);
+        moveGenerator = new MoveGenerator(board.CopyBoard());
     }
 
     public void SetBoard(Board board)
@@ -28,9 +28,9 @@ public class Computer
 
     public MoveGenerator.Move ChooseRandomMove()
     {
-        moveGenerator.GenerateLegalMoves();
+        List<MoveGenerator.Move> moves = moveGenerator.GenerateLegalMoves();
 
-        return moveGenerator.legalMoves[rnd.Next(0, moveGenerator.legalMoves.Count)];
+        return moves[rnd.Next(0, moves.Count)];
     }
 
     public MoveGenerator.Move ChooseBestMove()
