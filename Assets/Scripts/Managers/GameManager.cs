@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.SceneManagement;
 using UnityEngine.VFX;
 using static MoveGenerator;
 
@@ -19,6 +20,19 @@ public class GameManager : Singleton<GameManager>
     public bool MoveWasMade { get; set;}
     public GameState State { get; private set; }
     private Computer computer;
+    private Transform EndGameScreen;
+    private Transform Settings;
+    private Transform SettingsButton;
+
+    [SerializeField] private PlayerTypes _whitePlayerType;
+    [SerializeField] private PlayerTypes _blackPlayerType;
+
+    void Awake()
+    {
+        EndGameScreen = GameObject.Find("Canvas").transform.Find("EndGameScreen");
+        Settings = GameObject.Find("Canvas").transform.Find("SettingsPanel");
+        SettingsButton = GameObject.Find("Canvas").transform.Find("SettingsButton");
+    }
 
     void Start() => ChangeState(GameState.Starting);
 
@@ -71,7 +85,7 @@ public class GameManager : Singleton<GameManager>
         Spawner.SpawnPieces();  
         State = GameState.Starting;
 
-        SetPlayers(PlayerTypes.Human, PlayerTypes.Computer);
+        SetPlayers(_whitePlayerType, _blackPlayerType);
 
         Debug.Log($"White Player: {Board.Instance.WhitePlayer}");
         Debug.Log($"Black Player: {Board.Instance.BlackPlayer}");
@@ -133,17 +147,38 @@ public class GameManager : Singleton<GameManager>
 
     private void WhiteWin()
     {
-
+        EndGameScreen.gameObject.SetActive(true);
+        foreach (Transform child in EndGameScreen.transform)
+        {
+            if (child.name == "WhiteWinText")
+            {
+                child.gameObject.SetActive(true);
+            }
+        }
     }
 
     private void BlackWin()
     {
-
+        EndGameScreen.gameObject.SetActive(true);
+        foreach (Transform child in EndGameScreen.transform)
+        {
+            if (child.name == "BlackWinText")
+            {
+                child.gameObject.SetActive(true);
+            }
+        }
     }
 
     private void Draw()
     {
-
+        EndGameScreen.gameObject.SetActive(true);
+        foreach (Transform child in EndGameScreen.transform)
+        {
+            if (child.name == "DrawText")
+            {
+                child.gameObject.SetActive(true);
+            }
+        }
     }
 
     private bool PlayerMadeMove()
@@ -160,6 +195,22 @@ public class GameManager : Singleton<GameManager>
         {
             computer = new Computer(Board.Instance);
         }
+    }
+
+    public void ReturnToMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    public void ToggleSettings()
+    {
+        Settings.gameObject.SetActive(!Settings.gameObject.activeSelf);
+        SettingsButton.gameObject.SetActive(!SettingsButton.gameObject.activeSelf);
     }
 
     public enum GameState

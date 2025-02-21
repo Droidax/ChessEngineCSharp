@@ -9,26 +9,30 @@ public class HorseMenuAnimation : MonoBehaviour
     private float idleHeight = 8f;
     private float idleDuration = 1f;
     private Sequence idleSequence;
+    private RectTransform rectTransform;
+    private Vector2 initialAnchoredPosition;
     public Vector3 defaultPosition { get; private set; }
 
-    void Awake()
-    {
-        defaultPosition = gameObject.transform.position;
-    }
     private void Start()
     {
         StartIdleAnimation();
+    }
+
+    private void Awake()
+    {
+        defaultPosition = gameObject.transform.position;
+        rectTransform = GetComponent<RectTransform>();
+        initialAnchoredPosition = rectTransform.anchoredPosition;
     }
 
     public void StartIdleAnimation()
     {
         idleSequence = DOTween.Sequence();
 
-        idleSequence.Append(transform.DOMoveY(transform.position.y + idleHeight, idleDuration)
+        idleSequence.Append(rectTransform.DOAnchorPosY(initialAnchoredPosition.y + idleHeight, idleDuration)
             .SetEase(Ease.InOutSine));
-        idleSequence.Append(transform.DOMoveY(transform.position.y, idleDuration)
+        idleSequence.Append(rectTransform.DOAnchorPosY(initialAnchoredPosition.y, idleDuration)
             .SetEase(Ease.InOutSine));
-
 
         idleSequence.SetLoops(-1);
     }

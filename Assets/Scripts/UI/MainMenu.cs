@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Button = UnityEngine.UIElements.Button;
 
 public class MenuController : MonoBehaviour
 {
@@ -53,7 +56,6 @@ public class MenuController : MonoBehaviour
             break;
         }
 
-        ResetKnightPosition();
     }
 
     private void ToggleSettingsPanel()
@@ -72,6 +74,7 @@ public class MenuController : MonoBehaviour
                 child2.gameObject.SetActive(false);
             }
         }
+        ResetKnightPosition();
     }
 
     private void ResetKnightPosition()
