@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
 {
@@ -32,7 +33,7 @@ public class MenuController : MonoBehaviour
         switch (ButtonReference.name)
         {
             case "2Players":
-                // Implement 2-player logic
+                Play2Players();
             break;
 
             case "PlayerVsAi":
@@ -82,4 +83,8 @@ public class MenuController : MonoBehaviour
 
     }
 
+    private void Play2Players()
+    {
+        SceneManager.LoadScene("ChessBoard");
+    }
 }
