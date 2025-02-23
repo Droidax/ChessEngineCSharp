@@ -23,15 +23,23 @@ public class GameManager : Singleton<GameManager>
     private Transform EndGameScreen;
     private Transform Settings;
     private Transform SettingsButton;
-
-    [SerializeField] private PlayerTypes _whitePlayerType;
-    [SerializeField] private PlayerTypes _blackPlayerType;
+    private PlayerTypes whitePlayerType; 
+    private PlayerTypes blackPlayerType;
 
     void Awake()
     {
         EndGameScreen = GameObject.Find("Canvas").transform.Find("EndGameScreen");
         Settings = GameObject.Find("Canvas").transform.Find("SettingsPanel");
         SettingsButton = GameObject.Find("Canvas").transform.Find("SettingsButton");
+        whitePlayerType = PlayerTypes.Human;
+        if (SettingsManager.Instance.PlayAgainstAi)
+        {
+            blackPlayerType = PlayerTypes.Computer;
+        }
+        else
+        {
+            blackPlayerType = PlayerTypes.Human;
+        }
     }
 
     void Start() => ChangeState(GameState.Starting);
@@ -85,7 +93,7 @@ public class GameManager : Singleton<GameManager>
         Spawner.SpawnPieces();  
         State = GameState.Starting;
 
-        SetPlayers(_whitePlayerType, _blackPlayerType);
+        SetPlayers(whitePlayerType, blackPlayerType);
 
         Debug.Log($"White Player: {Board.Instance.WhitePlayer}");
         Debug.Log($"Black Player: {Board.Instance.BlackPlayer}");

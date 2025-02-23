@@ -5,12 +5,12 @@ using UnityEngine;
 public class SettingsManager : MonoBehaviour
 {
     public static SettingsManager Instance;
+    public bool PlayAgainstAi;
 
-    // Default values for settings
+
     public const int defaultEngineSearchDepth = 1;
     public const bool defaultFullscreen = true;
 
-    // Current settings values
     public int engineSearchDepth;
     public bool fullscreen;
 

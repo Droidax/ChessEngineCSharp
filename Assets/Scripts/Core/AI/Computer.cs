@@ -36,7 +36,7 @@ public class Computer
     public MoveGenerator.Move ChooseBestMove()
     {
         var search = new Search(board);
-        search.AlphaBetaMax(int.MinValue, int.MaxValue, 5);
+        search.AlphaBetaMax(int.MinValue, int.MaxValue, SettingsManager.Instance.engineSearchDepth);
 
         return search.BestMove;
     }

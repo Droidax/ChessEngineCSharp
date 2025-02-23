@@ -40,7 +40,7 @@ public class MenuController : MonoBehaviour
             break;
 
             case "PlayerVsAi":
-                // Implement vs AI logic
+                PlayAgainstAi();
             break;
 
             case "Settings":
@@ -88,6 +88,13 @@ public class MenuController : MonoBehaviour
 
     private void Play2Players()
     {
+        SettingsManager.Instance.PlayAgainstAi = false;
+        SceneManager.LoadScene("ChessBoard");
+    }
+
+    private void PlayAgainstAi()
+    {
+        SettingsManager.Instance.PlayAgainstAi = true;
         SceneManager.LoadScene("ChessBoard");
     }
 }
