@@ -12,7 +12,7 @@ namespace Assets.Scripts.Core
     {
         public static string StartingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         public static string TestFen = "8/2Rr3p/np2P3/2P3p1/5p2/1k5P/p4bbN/2K5 w - - 0 1";
-        public static string TestFen2 = "K7/7q/8/8/8/8/8/k5q1 w - - 0 1";
+        public static string TestFen2 = "K7/8/8/8/8/8/5q2/5qk1 w - - 0 1";
 
 
         private static Dictionary <char, int> _pieceTypeFromChar = new Dictionary<char, int>()
@@ -167,8 +167,8 @@ namespace Assets.Scripts.Core
 
             if (board.EnPassantSquare >= 0 && board.EnPassantSquare <= 63)
             {
-                int file = Board.GetPositionFromIndex(board.EnPassantSquare).file;
-                int rank = Board.GetPositionFromIndex(board.EnPassantSquare).rank;
+                int file = Board.GetPositionFromIndex(board.EnPassantSquare).rank;
+                int rank = Board.GetPositionFromIndex(board.EnPassantSquare).file;
 
                 switch (rank)
                 {

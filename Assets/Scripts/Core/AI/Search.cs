@@ -23,18 +23,43 @@ public class Search
 
     public int AlphaBetaMax(int alpha, int beta, int depth)
     {
-        evaluation = new Eval(board);
-        if (depth == 0) return evaluation.EvaluateCurrentPosition();
-        var bestMove = new Move();
 
+        evaluation = new Eval(board);
+        int eval = evaluation.EvaluateCurrentPosition();
+
+        // Handle terminal conditions with depth adjustment
+        if (eval == Int32.MaxValue)
+        {
+            return eval + depth; // Adjusted for shorter mates
+        }
+
+        if (eval == Int32.MinValue)
+        {
+            return eval - depth; // Adjusted for losing positions
+        }
+
+        if (eval == 0)
+        {
+            return 0; // Stalemate
+        }
+
+        if (depth == 0)
+        {
+            return eval;
+        }
+
+        var bestMove = new Move();
         var moveGenerator = new MoveGenerator(board);
         List<Move> moves = moveGenerator.GenerateLegalMoves();
+
         foreach (Move move in moves)
         {
             board.CopyBoard();
             board.MakeMove(move.StartSquare, move.TargetSquare);
+
             Search search = new Search(board);
             var score = AlphaBetaMin(alpha, beta, depth - 1);
+
             board.UnmakeMove();
 
             if (score >= beta)
@@ -46,7 +71,6 @@ public class Search
             {
                 alpha = score;
                 bestMove = move;
-
             }
         }
 
@@ -57,16 +81,40 @@ public class Search
     public int AlphaBetaMin(int alpha, int beta, int depth)
     {
         evaluation = new Eval(board);
-        if (depth == 0) return -evaluation.EvaluateCurrentPosition();
+        int eval = evaluation.EvaluateCurrentPosition();
+
+        // Handle terminal conditions with depth adjustment
+        if (eval == Int32.MaxValue)
+        {
+            return -eval - depth; // Adjusted for winning positions
+        }
+
+        if (eval == Int32.MinValue)
+        {
+            return -eval + depth; // Adjusted for losing positions
+        }
+
+        if (eval == 0)
+        {
+            return 0; // Stalemate
+        }
+
+        if (depth == 0)
+        {
+            return -eval;
+        }
 
         var moveGenerator = new MoveGenerator(board);
         List<Move> moves = moveGenerator.GenerateLegalMoves();
+
         foreach (Move move in moves)
         {
             board.CopyBoard();
             board.MakeMove(move.StartSquare, move.TargetSquare);
+
             Search search = new Search(board);
             var score = AlphaBetaMax(alpha, beta, depth - 1);
+
             board.UnmakeMove();
 
             if (score <= alpha)
@@ -79,6 +127,7 @@ public class Search
                 beta = score;
             }
         }
+
         return beta;
     }
 }

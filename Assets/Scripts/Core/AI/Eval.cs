@@ -1,3 +1,4 @@
+using System;
 using Assets.Scripts.Core;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ public class Eval
     private const int RookValue = 500;
     private const int QueenValue = 900;
     private Board board;
+    private const int Win = 9999999;
+    private const int Loose = -9999999;
 
     public Eval(Board board)
     {
@@ -19,6 +22,39 @@ public class Eval
 
     public int EvaluateCurrentPosition()
     {
+        GameManager.GameState state = board.EvaluateGameCondition();
+        //Debug.Log(state);
+
+        if (board.ColorToMove == Pieces.White)
+        {
+            if (state == GameManager.GameState.BlackWin)
+            {
+                return Win;
+            }
+
+            if (state == GameManager.GameState.WhiteWin)
+            {
+                return Loose;
+            }
+        }
+        else
+        {
+            if (state == GameManager.GameState.WhiteWin)
+            {
+                return Win;
+            }
+
+            if (state == GameManager.GameState.BlackWin)
+            {
+                return Loose;
+            }
+        }
+
+        if (state == GameManager.GameState.Draw)
+        {
+            return 0;
+        }
+
         int whiteMaterial = CountMaterial(Pieces.White);
         int blackMaterial = CountMaterial(Pieces.Black);
 

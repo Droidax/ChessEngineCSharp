@@ -38,6 +38,7 @@ namespace Assets.Scripts.Core
         public bool BlackCastleQueenside;
         public GameManager.PlayerTypes WhitePlayer;
         public GameManager.PlayerTypes BlackPlayer;
+        public TranspositionTable TranspositionTable;
         public MoveGenerator MoveGenerator { get; private set; }
         public List<MoveGenerator.Move> LegalMoves { get; private set; }
 
@@ -47,7 +48,10 @@ namespace Assets.Scripts.Core
         private Dictionary<string, int> boardPositions = new Dictionary<string, int>();
 
 
-        private Board(){ }
+        private Board()
+        {
+        }
+
         public static Board Instance
         {
             get
@@ -56,12 +60,14 @@ namespace Assets.Scripts.Core
                 {
                     instance = new Board();
                 }
+
                 return instance;
             }
         }
+
         public void SetNewBoard()
         {
-            FenInfo = Fen.LoadPositionFromFen(Fen.StartingFen);
+            FenInfo = Fen.LoadPositionFromFen(Fen.TestFen2);
             EnPassantSquare = FenInfo.EnPassantSquare;
             WhiteCastleKingside = FenInfo.WhiteCastleKingside;
             WhiteCastleQueenside = FenInfo.BlackCastleQueenside;
@@ -83,6 +89,7 @@ namespace Assets.Scripts.Core
                         whiteKingIndex = index;
                         continue;
                     }
+
                     blackKingIndex = index;
                 }
             }
@@ -125,7 +132,9 @@ namespace Assets.Scripts.Core
                 Square[targetIndex + (ColorToMove == Pieces.White ? -8 : 8)] = Pieces.Empty;
 
             }
-            if (Pieces.IsType(Square[startIndex], Pieces.Pawn) && startIndex + (ColorToMove == Pieces.White ? 16 : -16) == targetIndex)
+
+            if (Pieces.IsType(Square[startIndex], Pieces.Pawn) &&
+                startIndex + (ColorToMove == Pieces.White ? 16 : -16) == targetIndex)
             {
                 EnPassantSquare = startIndex + (ColorToMove == Pieces.White ? 8 : -8);
             }
@@ -140,11 +149,13 @@ namespace Assets.Scripts.Core
                 UpdateCastlingRights(targetIndex);
                 ResetHalfMoveCounter();
             }
+
             if (Pieces.IsType(Square[startIndex], Pieces.King) || Pieces.IsType(Square[startIndex], Pieces.Rook))
             {
                 UpdateCastlingRights(startIndex);
                 ResetHalfMoveCounter();
             }
+
             if (Pieces.IsType(Square[startIndex], Pieces.King) && math.abs(startIndex - targetIndex) == 2)
             {
                 if (targetIndex > startIndex)
@@ -164,7 +175,8 @@ namespace Assets.Scripts.Core
             Square[startIndex] = Pieces.Empty;
 
             //pawn promotion
-            if (Pieces.IsType(Square[targetIndex], Pieces.Pawn) && squaresToEdge[targetIndex][ColorToMove == Pieces.White ? 0 : 1] == 0)
+            if (Pieces.IsType(Square[targetIndex], Pieces.Pawn) &&
+                squaresToEdge[targetIndex][ColorToMove == Pieces.White ? 0 : 1] == 0)
             {
                 PromotePawn(targetIndex, promoteTo);
             }
@@ -174,7 +186,7 @@ namespace Assets.Scripts.Core
             {
                 if (Pieces.IsColor(Square[targetIndex], Pieces.White))
                     whiteKingIndex = targetIndex;
-                
+
                 else
                     blackKingIndex = targetIndex;
             }
@@ -212,7 +224,9 @@ namespace Assets.Scripts.Core
                 Actions.OnDestroyPiece(targetIndex + (ColorToMove == Pieces.White ? -8 : 8));
 
             }
-            if (Pieces.IsType(Square[startIndex], Pieces.Pawn) && startIndex + (ColorToMove == Pieces.White ? 16 : -16) == targetIndex)
+
+            if (Pieces.IsType(Square[startIndex], Pieces.Pawn) &&
+                startIndex + (ColorToMove == Pieces.White ? 16 : -16) == targetIndex)
             {
                 EnPassantSquare = startIndex + (ColorToMove == Pieces.White ? 8 : -8);
             }
@@ -227,11 +241,13 @@ namespace Assets.Scripts.Core
                 UpdateCastlingRights(targetIndex);
                 ResetHalfMoveCounter();
             }
+
             if (Pieces.IsType(Square[startIndex], Pieces.King) || Pieces.IsType(Square[startIndex], Pieces.Rook))
             {
                 UpdateCastlingRights(startIndex);
                 ResetHalfMoveCounter();
             }
+
             if (Pieces.IsType(Square[startIndex], Pieces.King) && math.abs(startIndex - targetIndex) == 2)
             {
                 if (targetIndex > startIndex)
@@ -254,10 +270,12 @@ namespace Assets.Scripts.Core
             Square[startIndex] = Pieces.Empty;
 
             //pawn promotion
-            if (Pieces.IsType(Square[targetIndex], Pieces.Pawn) && squaresToEdge[targetIndex][ColorToMove == Pieces.White ? 0 : 1] == 0)
+            if (Pieces.IsType(Square[targetIndex], Pieces.Pawn) &&
+                squaresToEdge[targetIndex][ColorToMove == Pieces.White ? 0 : 1] == 0)
             {
                 PromotePawn(targetIndex, promoteTo);
-                GameObject.Find("Piece" + startIndex).GetComponent<Piece>().ChangeSprite(Pieces.GetColor(Square[targetIndex]), promoteTo);
+                GameObject.Find("Piece" + startIndex).GetComponent<Piece>()
+                    .ChangeSprite(Pieces.GetColor(Square[targetIndex]), promoteTo);
 
             }
 
@@ -344,6 +362,7 @@ namespace Assets.Scripts.Core
             fullmoveCount = lastMove.fullmoveCount;
             boardPositions = new Dictionary<string, int>(lastMove.boardPositions);
         }
+
         public void MovePiece(GameObject piece, GameObject target)
         {
             int pieceIndex = int.Parse(piece.name.Remove(0, 5));
@@ -374,9 +393,10 @@ namespace Assets.Scripts.Core
                 MakeMove(pieceIndex, targetIndex);
 
                 Actions.OnPieceMove(pieceIndex, targetIndex);
-                
+
                 GameManager.Instance.MoveWasMade = true;
             }
+
             ResetSquareColor();
         }
 
@@ -399,6 +419,7 @@ namespace Assets.Scripts.Core
 
                 GameManager.Instance.MoveWasMade = true;
             }
+
             ResetSquareColor();
 
         }
@@ -415,7 +436,7 @@ namespace Assets.Scripts.Core
             {
                 board.AttackingSquares[move.TargetSquare] = 1;
             }
-            
+
             if (board.ColorToMove == Pieces.Black && board.AttackingSquares[board.blackKingIndex] == 1)
             {
                 board.IsInCheck = true;
@@ -429,7 +450,7 @@ namespace Assets.Scripts.Core
             }
 
             board.IsInCheck = false;
-            
+
         }
 
         public bool CanCastle(bool queenSide, Board board)
@@ -447,15 +468,17 @@ namespace Assets.Scripts.Core
 
             if (queenSide)
             {
-                if (board.AttackingSquares[board.ColorToMove == Pieces.White ? 2 : 58] == 1 || board.AttackingSquares[board.ColorToMove == Pieces.White ? 3 : 59] == 1)
+                if (board.AttackingSquares[board.ColorToMove == Pieces.White ? 2 : 58] == 1 ||
+                    board.AttackingSquares[board.ColorToMove == Pieces.White ? 3 : 59] == 1)
                 {
-                        return false;
+                    return false;
                 }
 
                 return true;
             }
 
-            if (board.AttackingSquares[board.ColorToMove == Pieces.White ? 5 : 61] == 1 || board.AttackingSquares[board.ColorToMove == Pieces.White ? 6 : 62] == 1)
+            if (board.AttackingSquares[board.ColorToMove == Pieces.White ? 5 : 61] == 1 ||
+                board.AttackingSquares[board.ColorToMove == Pieces.White ? 6 : 62] == 1)
             {
                 return false;
             }
@@ -512,6 +535,7 @@ namespace Assets.Scripts.Core
                 }
             }
         }
+
         static void ComputeSquaresToEdge()
         {
             for (int file = 0; file < 8; file++)
@@ -533,10 +557,11 @@ namespace Assets.Scripts.Core
             }
         }
 
-        public static (int rank, int file) GetPositionFromIndex(int squareIndex)// rank, file
+        public static (int file, int rank) GetPositionFromIndex(int squareIndex) // rank, file
         {
             return (squareIndex % 8 + 1, squareIndex / 8 + 1);
         }
+
         public static int GetIndexFromPosition(int file, int rank) //file a rank v rozmezí 1 až 8
         {
             return rank * 8 - (8 - file) - 1;
@@ -561,7 +586,7 @@ namespace Assets.Scripts.Core
         {
             Actions.OnResetSquareColor();
         }
-        
+
         public void UpdateBoardPositionHistory()
         {
             string positionHash = GetBoardHash();
@@ -575,7 +600,6 @@ namespace Assets.Scripts.Core
         private bool CheckThreefoldRepetition()
         {
             string positionHash = GetBoardHash();
-            Debug.Log(boardPositions[positionHash]);
             return boardPositions.ContainsKey(positionHash) && boardPositions[positionHash] >= 3;
         }
 
@@ -618,5 +642,4 @@ namespace Assets.Scripts.Core
             return GameState.BlackTurn;
         }
     }
-
 }

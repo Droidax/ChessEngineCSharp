@@ -207,7 +207,7 @@ public class MoveGenerator
         pseudoMoves.Add(new Move(starSquare, starSquare + (color == Pieces.White ? 8 : -8)));
 
         //double push
-        if (Board.GetPositionFromIndex(starSquare).file == initialRank && board.Square[starSquare + (color == Pieces.White ? 16 : -16)] == Pieces.Empty)
+        if (Board.GetPositionFromIndex(starSquare).rank == initialRank && board.Square[starSquare + (color == Pieces.White ? 16 : -16)] == Pieces.Empty)
         {
             pseudoMoves.Add(new Move(starSquare, starSquare + (color == Pieces.White ? 16 : -16)));
         }
