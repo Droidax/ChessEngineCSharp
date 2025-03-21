@@ -86,7 +86,6 @@ public class GameManager : Singleton<GameManager>
 
     private void StartGame()
     {
-        TranspositionTable.Instance.Clear();
         Board.Instance.SetNewBoard();
         Spawner = Instantiate(_spawnerPrefab);
 

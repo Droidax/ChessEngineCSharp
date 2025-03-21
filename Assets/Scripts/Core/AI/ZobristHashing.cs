@@ -111,7 +111,7 @@ public class ZobristHashing
 
     private int GetPieceIndex(int piece)
     {
-        return Pieces.GetColor(piece) == Pieces.White ? Pieces.GetPieceType(piece) : Pieces.GetPieceType(piece) + 5;
+        return Pieces.GetColor(piece) == Pieces.White ? Pieces.GetPieceType(piece) : Pieces.GetPieceType(piece) + 6;
     }
 
     public ulong UpdateHashForMove(ulong currentHash, Board newBoard, Board oldBoard, MoveGenerator.Move move)

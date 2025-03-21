@@ -67,7 +67,7 @@ namespace Assets.Scripts.Core
 
         public void SetNewBoard()
         {
-            FenInfo = Fen.LoadPositionFromFen(Fen.StartingFen);
+            FenInfo = Fen.LoadPositionFromFen(Fen.TestFen2);
             EnPassantSquare = FenInfo.EnPassantSquare;
             WhiteCastleKingside = FenInfo.WhiteCastleKingside;
             WhiteCastleQueenside = FenInfo.BlackCastleQueenside;

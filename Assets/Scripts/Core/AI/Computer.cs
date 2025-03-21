@@ -35,13 +35,13 @@ public class Computer
 
     public MoveGenerator.Move ChooseBestMove()
     {
-
         var search = new Search(board);
         search.AlphaBetaMax(int.MinValue, int.MaxValue, SettingsManager.Instance.engineSearchDepth);
 
-        // Log statistics
-        Debug.Log($"Search stats: {search.GetStats()}");
-
         return search.BestMove;
     }
+
+
+
+    
 }
