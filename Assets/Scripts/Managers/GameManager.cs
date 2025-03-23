@@ -128,13 +128,15 @@ public class GameManager : Singleton<GameManager>
         WaitingForMove = false;
 
         Board.Instance.UpdateOpponentsAttackingSquares(Board.Instance);
+        yield return null;
+
         ChangeState(Board.Instance.EvaluateGameCondition());
         
     }
     IEnumerator BlackToMove()
     {
         MoveGenerator moveGenerator = new MoveGenerator(Board.Instance);
-        moveGenerator.GenerateLegalMoves(Pieces.White);
+        moveGenerator.GenerateLegalMoves(Pieces.Black);
 
         if (Board.Instance.BlackPlayer == PlayerTypes.Human)
         {
@@ -143,13 +145,16 @@ public class GameManager : Singleton<GameManager>
         }
         else
         {
-            computer.SetBoard(Board.Instance);
             Board.Instance.MovePiece(computer.ChooseBestMove(), true);
+            Board.Instance.ColorToMove = Pieces.White;
+            Board.Instance.friendlyColor = Pieces.White;
+            Board.Instance.opponentColor = Pieces.Black;
         }
         MoveWasMade = false;
         WaitingForMove = false;
 
         Board.Instance.UpdateOpponentsAttackingSquares(Board.Instance);
+        yield return null;
         ChangeState(Board.Instance.EvaluateGameCondition());
     }
 

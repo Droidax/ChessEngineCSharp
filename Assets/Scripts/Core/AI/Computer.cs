@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
+using static MoveGenerator;
 using Random = System.Random;
 
 
@@ -35,10 +36,13 @@ public class Computer
 
     public MoveGenerator.Move ChooseBestMove()
     {
-        var search = new Search(board);
-        search.AlphaBetaMax(int.MinValue, int.MaxValue, SettingsManager.Instance.engineSearchDepth);
+        Search search = new Search(board);
+        int score = search.Negamax(SettingsManager.Instance.engineSearchDepth, int.MinValue, int.MaxValue, 1);
+        Move bestMove = search.BestMove;
 
-        return search.BestMove;
+        search.PrintStatistics();
+
+        return bestMove;
     }
 
 

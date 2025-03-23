@@ -12,8 +12,8 @@ public class Eval
     private const int RookValue = 500;
     private const int QueenValue = 900;
     private Board board;
-    private const int Win = 9999999;
-    private const int Loose = -9999999;
+    private const int Win = int.MaxValue;
+    private const int Loose = int.MinValue;
 
     public Eval(Board board)
     {

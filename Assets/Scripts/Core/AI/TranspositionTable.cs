@@ -1,6 +1,7 @@
 using Assets.Scripts.Core;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ public class TranspositionTable
     public static TranspositionTable instance;
 
     private Dictionary<ulong, TranspositionEntry> table = new Dictionary<ulong, TranspositionEntry>();
-
+    
     public TranspositionTable()
     {
     }
@@ -56,14 +57,19 @@ public class TranspositionTable
         }
         else
         {
+            if (table.Count >= 900_000)
+            {
+                var firstKey = table.Keys.First();
+                table.Remove(firstKey);
+            }
             table[key] = new TranspositionEntry
             {
                 Key = key,
                 Score = score,
                 Depth = depth,
                 Flag = flag,
-                BestMove = bestMove
-            };
+                BestMove = bestMove,
+        };
         }
     }
 
@@ -74,5 +80,10 @@ public class TranspositionTable
             return entry;
         }
         return null;
+    }
+
+    public int GetSize()
+    {
+        return table.Count;
     }
 }

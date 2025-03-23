@@ -97,9 +97,10 @@ public class ZobristHashing
         if (board.BlackCastleQueenside)
             hash ^= blackQueensideCastling;
 
-        if (Board.GetPositionFromIndex(board.EnPassantSquare).file  >= 0 && Board.GetPositionFromIndex(board.EnPassantSquare).file < 8)
+        if (board.EnPassantSquare >= 0 && board.EnPassantSquare < 64)
         {
-            hash ^= enPassantTable[Board.GetPositionFromIndex(board.EnPassantSquare).file];
+            int file = Board.GetPositionFromIndex(board.EnPassantSquare).file - 1; // if GetPositionFromIndex returns 1-indexed file.
+            hash ^= enPassantTable[file];
         }
 
         // Side to move: XOR if it is Black's turn
@@ -111,7 +112,7 @@ public class ZobristHashing
 
     private int GetPieceIndex(int piece)
     {
-        return Pieces.GetColor(piece) == Pieces.White ? Pieces.GetPieceType(piece) : Pieces.GetPieceType(piece) + 6;
+        return (Pieces.GetColor(piece) == Pieces.White ? Pieces.GetPieceType(piece) : Pieces.GetPieceType(piece) + 6) - 1 ;
     }
 
     public ulong UpdateHashForMove(ulong currentHash, Board newBoard, Board oldBoard, MoveGenerator.Move move)
@@ -141,22 +142,40 @@ public class ZobristHashing
         {
             if (oldBoard.WhiteCastleKingside) currentHash ^= whiteKingsideCastling;
             if (newBoard.WhiteCastleKingside) currentHash ^= whiteKingsideCastling;
+            currentHash ^= zobristTable[3, 7];
+            currentHash ^= zobristTable[3, 5];
         }
         if (oldBoard.WhiteCastleQueenside != newBoard.WhiteCastleQueenside)
         {
             if (oldBoard.WhiteCastleQueenside) currentHash ^= whiteQueensideCastling;
             if (newBoard.WhiteCastleQueenside) currentHash ^= whiteQueensideCastling;
+            currentHash ^= zobristTable[3, 0];
+            currentHash ^= zobristTable[3, 3];
         }
         if (oldBoard.BlackCastleKingside != newBoard.BlackCastleKingside)
         {
             if (oldBoard.BlackCastleKingside) currentHash ^= blackKingsideCastling;
             if (newBoard.BlackCastleKingside) currentHash ^= blackKingsideCastling;
+            currentHash ^= zobristTable[8, 63];
+            currentHash ^= zobristTable[8, 61];
         }
 
         if (oldBoard.BlackCastleQueenside != newBoard.BlackCastleQueenside)
         {
             if (oldBoard.BlackCastleQueenside) currentHash ^= blackQueensideCastling;
             if (newBoard.BlackCastleQueenside) currentHash ^= blackQueensideCastling;
+            currentHash ^= zobristTable[8, 56];
+            currentHash ^= zobristTable[8, 59];
+        }
+
+        //En passant capture
+        if (movingPiece == Pieces.Pawn && Board.GetPositionFromIndex(toSquare).file == oldEnPassantFile)
+        {
+            int epCaptureSquare = oldBoard.EnPassantSquare;
+            int capturedPawnPiece = oldBoard.Square[epCaptureSquare];
+            int capturedPawnIndex = GetPieceIndex(capturedPawnPiece);
+
+            currentHash ^= zobristTable[capturedPawnIndex, epCaptureSquare];
         }
 
         // En passant update
@@ -167,6 +186,18 @@ public class ZobristHashing
         if (newEnPassantFile >= 0 && newEnPassantFile < 8)
         {
             currentHash ^= enPassantTable[newEnPassantFile];
+        }
+
+        //Promotion if promoting to queen
+        if (oldBoard.ColorToMove == Pieces.White && movingPiece == Pieces.Pawn && toSquare is >= 56 and <= 63)
+        {
+            currentHash ^= zobristTable[0, toSquare];
+            currentHash ^= zobristTable[4, toSquare];
+        }
+        else if (oldBoard.ColorToMove == Pieces.Black && movingPiece == Pieces.Pawn && toSquare is >= 0 and <= 7)
+        {
+            currentHash ^= zobristTable[6, toSquare];
+            currentHash ^= zobristTable[10, toSquare];
         }
 
         // Side-to-move update

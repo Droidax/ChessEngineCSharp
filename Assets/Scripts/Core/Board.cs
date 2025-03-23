@@ -67,7 +67,7 @@ namespace Assets.Scripts.Core
 
         public void SetNewBoard()
         {
-            FenInfo = Fen.LoadPositionFromFen(Fen.TestFen2);
+            FenInfo = Fen.LoadPositionFromFen(Fen.StartingFen);
             EnPassantSquare = FenInfo.EnPassantSquare;
             WhiteCastleKingside = FenInfo.WhiteCastleKingside;
             WhiteCastleQueenside = FenInfo.BlackCastleQueenside;
@@ -205,8 +205,7 @@ namespace Assets.Scripts.Core
                 IncrementHalfMoveCounter();
             }
 
-            ColorToMove = opponentColor;
-            opponentColor = friendlyColor;
+            (ColorToMove, opponentColor) = (opponentColor, ColorToMove);
             friendlyColor = ColorToMove;
 
             UpdateBoardPositionHistory();
@@ -303,8 +302,7 @@ namespace Assets.Scripts.Core
                 IncrementHalfMoveCounter();
             }
 
-            ColorToMove = opponentColor;
-            opponentColor = friendlyColor;
+            (ColorToMove, opponentColor) = (opponentColor, ColorToMove);
             friendlyColor = ColorToMove;
 
             UpdateBoardPositionHistory();
