@@ -37,12 +37,11 @@ public class Computer
     public MoveGenerator.Move ChooseBestMove()
     {
         Search search = new Search(board);
-        int score = search.Negamax(SettingsManager.Instance.engineSearchDepth, int.MinValue, int.MaxValue, 1);
-        Move bestMove = search.BestMove;
-
-        search.PrintStatistics();
-
-        return bestMove;
+        //int score = search.Negamax(SettingsManager.Instance.engineSearchDepth, int.MinValue, int.MaxValue, 1);
+        //Move bestMove = search.BestMove;
+        //search.PrintStatistics();
+        search.AlphaBetaMax(int.MinValue, int.MaxValue, 4);
+        return search.BestMove;
     }
 
 
