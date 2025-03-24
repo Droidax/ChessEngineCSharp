@@ -100,6 +100,7 @@ public class GameManager : Singleton<GameManager>
         WaitingForMove = false;
         MoveWasMade = false;
 
+
         if (Board.Instance.ColorToMove == Pieces.White)
         {
             ChangeState(GameState.WhiteTurn);
@@ -118,6 +119,7 @@ public class GameManager : Singleton<GameManager>
         {
             WaitingForMove = true;
             yield return new WaitUntil(PlayerMadeMove);
+
         }
         else
         {
@@ -131,7 +133,8 @@ public class GameManager : Singleton<GameManager>
         yield return null;
 
         ChangeState(Board.Instance.EvaluateGameCondition());
-        
+        Debug.Log(ZobristHashing.Instance.ComputeFullHash(Board.Instance));
+
     }
     IEnumerator BlackToMove()
     {
@@ -156,6 +159,8 @@ public class GameManager : Singleton<GameManager>
         Board.Instance.UpdateOpponentsAttackingSquares(Board.Instance);
         yield return null;
         ChangeState(Board.Instance.EvaluateGameCondition());
+        Debug.Log(ZobristHashing.Instance.ComputeFullHash(Board.Instance));
+
     }
 
     private void WhiteWin()
