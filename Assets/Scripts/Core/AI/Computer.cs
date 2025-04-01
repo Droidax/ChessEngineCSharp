@@ -23,7 +23,7 @@ public class Computer
         this.board = board;
         moveGenerator = new MoveGenerator(board.CopyBoard());
         openingBook = new PolyglotBook();
-        openingBook.LoadFromFile("Assets/Resources/Perfect2021.bin");
+        openingBook.LoadFromFile();
     }
 
     public void SetBoard(Board board)
@@ -46,6 +46,10 @@ public class Computer
             Console.WriteLine(bookMove.StartSquare);
             Console.WriteLine(bookMove.TargetSquare);
             return bookMove;
+        }
+        else
+        {
+            Debug.Log("Opening book not used");
         }
         Search search = new Search(board);
         //int score = search.Negamax(SettingsManager.Instance.engineSearchDepth, int.MinValue, int.MaxValue, 1);

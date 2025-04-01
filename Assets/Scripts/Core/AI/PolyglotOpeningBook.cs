@@ -16,9 +16,15 @@ public class PolyglotBook
 
     private List<Entry> entries = new List<Entry>();
 
-    public bool LoadFromFile(string path)
+    public bool LoadFromFile()
     {
-        byte[] data = File.ReadAllBytes(path);
+        TextAsset binAsset = Resources.Load<TextAsset>("Perfect2021");
+        if (binAsset == null)
+        {
+            Debug.LogError("Failed to load Perfect2021.bytes from Resources.");
+            return false;
+        }
+        byte[] data = binAsset.bytes;
         int entrySize = 16; // Each entry is 16 bytes
 
         for (int i = 0; i <= data.Length - entrySize; i += entrySize)

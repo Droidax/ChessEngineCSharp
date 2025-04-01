@@ -45,7 +45,7 @@ namespace Assets.Scripts.Core
         public int halfmoveCount { get; private set; }
         public int fullmoveCount { get; private set; }
 
-        private Dictionary<string, int> boardPositions = new Dictionary<string, int>();
+        private Dictionary<ulong, int> boardPositions = new Dictionary<ulong, int>();
 
 
         private Board()
@@ -116,7 +116,7 @@ namespace Assets.Scripts.Core
             copiedBoard.BlackCastleQueenside = BlackCastleQueenside;
             copiedBoard.halfmoveCount = halfmoveCount;
             copiedBoard.fullmoveCount = fullmoveCount;
-            copiedBoard.boardPositions = new Dictionary<string, int>(boardPositions);
+            copiedBoard.boardPositions = new Dictionary<ulong, int>(boardPositions);
 
             return copiedBoard;
         }
@@ -308,22 +308,6 @@ namespace Assets.Scripts.Core
             UpdateBoardPositionHistory();
         }
 
-        public string GetBoardHash()
-        {
-            string fen = Fen.GetShorterFen(this);
-
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
-            {
-                byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(fen);
-                byte[] hashBytes = sha256.ComputeHash(inputBytes);
-
-                StringBuilder sb = new StringBuilder();
-                foreach (byte b in hashBytes)
-                    sb.Append(b.ToString("X2"));
-
-                return sb.ToString();
-            }
-        }
 
         private void ResetHalfMoveCounter()
         {
@@ -358,7 +342,7 @@ namespace Assets.Scripts.Core
             BlackCastleQueenside = lastMove.BlackCastleQueenside;
             halfmoveCount = lastMove.halfmoveCount;
             fullmoveCount = lastMove.fullmoveCount;
-            boardPositions = new Dictionary<string, int>(lastMove.boardPositions);
+            boardPositions = new Dictionary<ulong, int>(lastMove.boardPositions);
         }
 
         public void MovePiece(GameObject piece, GameObject target)
@@ -587,7 +571,7 @@ namespace Assets.Scripts.Core
 
         public void UpdateBoardPositionHistory()
         {
-            string positionHash = GetBoardHash();
+            ulong positionHash = ZobristHashing.Instance.ComputeFullHash(this);
 
             if (boardPositions.ContainsKey(positionHash))
                 boardPositions[positionHash]++;
@@ -597,7 +581,7 @@ namespace Assets.Scripts.Core
 
         private bool CheckThreefoldRepetition()
         {
-            string positionHash = GetBoardHash();
+            ulong positionHash = ZobristHashing.Instance.ComputeFullHash(this);
             return boardPositions.ContainsKey(positionHash) && boardPositions[positionHash] >= 3;
         }
 

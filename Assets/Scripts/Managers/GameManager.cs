@@ -25,6 +25,7 @@ public class GameManager : Singleton<GameManager>
     private Transform SettingsButton;
     private PlayerTypes whitePlayerType; 
     private PlayerTypes blackPlayerType;
+    private GameObject calculatingpannel;
 
     void Awake()
     {
@@ -39,6 +40,14 @@ public class GameManager : Singleton<GameManager>
         else
         {
             blackPlayerType = PlayerTypes.Human;
+        }
+
+        foreach (Transform child in GameObject.Find("Canvas").transform)
+        {
+            if (child.name == "CalculatingMovePanel")
+            {
+                calculatingpannel = child.gameObject;
+            }
         }
     }
 
@@ -148,10 +157,13 @@ public class GameManager : Singleton<GameManager>
         }
         else
         {
+            calculatingpannel.SetActive(true);
+            yield return null;
             Board.Instance.MovePiece(computer.ChooseBestMove(), true);
             Board.Instance.ColorToMove = Pieces.White;
             Board.Instance.friendlyColor = Pieces.White;
             Board.Instance.opponentColor = Pieces.Black;
+            calculatingpannel.SetActive(false);
         }
         MoveWasMade = false;
         WaitingForMove = false;
